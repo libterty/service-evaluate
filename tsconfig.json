@@ -2,14 +2,26 @@
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
+    "noImplicitAny": false,
     "removeComments": true,
+    "noLib": false,
+    "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
+    "target": "es6",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
-    "incremental": true
-  }
+    "baseUrl": "./src",
+    "resolveJsonModule": true,
+    "esModuleInterop": true
+  },
+  "include": [
+    "src/**/*",
+    "pipes/*",
+    "middlewares/*",
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
 }

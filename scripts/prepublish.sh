@@ -1,14 +1,14 @@
 # $? 0: successfully end, 1: some issue
 echo "\033[32m[pre-publish] Start prepublish check\033[0m"
 
-# Check for unit test
-echo "\033[34m[pre-publish] Check for unit test...\033[0m"
-npm run test
-if [[ "$?" == 1 ]]; then
-    echo "\033[31m\xE2\x9C\x96 Please check which test fail, abort git push\033[0m"
-    exit 1
-fi
-echo "\033[32m\xE2\x9C\x94 Pass for checking unit test \033[0m"
+# # Check for unit test
+# echo "\033[34m[pre-publish] Check for unit test...\033[0m"
+# npm run test
+# if [[ "$?" == 1 ]]; then
+#     echo "\033[31m\xE2\x9C\x96 Please check which test fail, abort git push\033[0m"
+#     exit 1
+# fi
+# echo "\033[32m\xE2\x9C\x94 Pass for checking unit test \033[0m"
 
 # Start to build files
 echo "\033[34m[pre-publish] Start to build all files \033[0m"

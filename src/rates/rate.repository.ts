@@ -1,9 +1,5 @@
 import { CreateWhenError, ReadWhenError, UpdateWhenError } from 'libs/error';
-import {
-  Repository,
-  EntityRepository,
-  getMongoManager,
-} from 'typeorm';
+import { Repository, EntityRepository, getMongoManager } from 'typeorm';
 import { merge } from 'lodash';
 import { IFurniture, IPrice, ITransport } from './facilities/facility.dto';
 import { Furniture } from './facilities/funiture.entity';

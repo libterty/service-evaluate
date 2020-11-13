@@ -35,7 +35,7 @@ async function bootstrap() {
   app.register(fastifyCors, {
     credentials: true,
     origin: true,
-    methods: ["GET", "POST", "PUT", "DELETE"]
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
   });
 
   SwaggerModule.setup(config.API_EXPLORER_PATH, app, doc);

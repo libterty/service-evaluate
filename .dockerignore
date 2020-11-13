@@ -28,3 +28,8 @@ loadtests/
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# data
+tw-rental-data/
+ex.json
+data/

@@ -38,3 +38,8 @@ lerna-debug.log*
 
 # loadtest
 loadtests/
+
+# data
+tw-rental-data/
+ex.json
+data/

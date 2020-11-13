@@ -45,7 +45,6 @@ export class Furniture {
   tv?: boolean;
 
   constructor(
-    id: number,
     refrigerator?: boolean,
     conditioner?: boolean,
     gas?: boolean,
@@ -60,7 +59,6 @@ export class Furniture {
     wardrobe?: boolean,
     tv?: boolean,
   ) {
-    this.id = id;
     this.refrigerator = !!refrigerator ? refrigerator : false;
     this.conditioner = !!conditioner ? conditioner : false;
     this.gas = !!gas ? gas : false;

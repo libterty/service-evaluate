@@ -1,7 +1,10 @@
-import { Entity, Column } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Furniture {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column()
   refrigerator?: boolean;
 
@@ -42,6 +45,7 @@ export class Furniture {
   tv?: boolean;
 
   constructor(
+    id: number,
     refrigerator?: boolean,
     conditioner?: boolean,
     gas?: boolean,
@@ -56,6 +60,7 @@ export class Furniture {
     wardrobe?: boolean,
     tv?: boolean,
   ) {
+    this.id = id;
     this.refrigerator = !!refrigerator ? refrigerator : false;
     this.conditioner = !!conditioner ? conditioner : false;
     this.gas = !!gas ? gas : false;

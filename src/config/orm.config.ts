@@ -7,5 +7,5 @@ export const ormConfig: TypeOrmModuleOptions = {
   port: config.DB_SETTINGS.port,
   database: config.DB_SETTINGS.database,
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
-  synchronize: true,
+  synchronize: false,
 };

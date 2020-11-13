@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
 import { Furniture } from './facilities/funiture.entity';
 import { Transport } from './facilities/transport.entity';
 import { Price } from './facilities/price.entity';
@@ -14,12 +14,15 @@ export class Rate extends BaseEntity {
   @Column()
   owner: string;
 
-  @Column(() => Furniture)
+  @OneToOne(() => Furniture)
+  @JoinColumn()
   furniture: Furniture;
 
-  @Column(() => Transport)
+  @OneToOne(() => Transport)
+  @JoinColumn()
   transport: Transport;
 
-  @Column(() => Price)
+  @OneToOne(() => Price)
+  @JoinColumn()
   price: Price;
 }

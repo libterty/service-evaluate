@@ -5,7 +5,7 @@ import { IFurniture, IPrice, ITransport } from './facilities/facility.dto';
 import { Furniture } from './facilities/funiture.entity';
 import { Price } from './facilities/price.entity';
 import { Transport } from './facilities/transport.entity';
-import { IRate } from './rate.dto';
+import { IPage, IRate } from './rate.dto';
 import { Rate } from './rate.entity';
 
 @EntityRepository(Rate)
@@ -14,12 +14,24 @@ export class RateRepository extends Repository<Rate> {
   /**
    * @description Get Rate With Pagination
    * @public
+   * @param {IPage} searchDto rate search dto
    * @returns {Promise<Rate[]>}
    */
-  public async getRates(): Promise<Rate[]> {
+  public async getRates(
+    searchDto: IPage,
+  ): Promise<{ rates: Rate[]; count: number }> {
     try {
-      const rates: Rate[] = await this.repoManager.find(Rate);
-      return rates;
+      const take = searchDto.take ? Number(searchDto.take) : 10;
+      const skip = searchDto.skip ? Number(searchDto.skip) : 0;
+
+      const [rates, count] = await this.repoManager.findAndCount(Rate, {
+        take,
+        skip,
+      });
+      return {
+        rates,
+        count,
+      };
     } catch (error) {
       throw new ReadWhenError(error.message);
     }
@@ -86,12 +98,28 @@ export class RateRepository extends Repository<Rate> {
    * @param {IRate} rateDto rate data transfer object
    * @returns {Promise<Rate | Error>}
    */
-  public async createRate(rateDto: IRate): Promise<Rate | Error> {
+  public async createRate(rateDto: IRate): Promise<Rate> {
     try {
-      const { vender, owner, transport, furniture, price } = rateDto;
+      const {
+        vender,
+        owner,
+        averageRate,
+        noiseRate,
+        locationRate,
+        houseConiditionRate,
+        houseOwnerRate,
+        transport,
+        furniture,
+        price,
+      } = rateDto;
       const rate = new Rate();
       rate.vender = vender;
       rate.owner = owner;
+      rate.averageRate = averageRate;
+      rate.noiseRate = noiseRate;
+      rate.locationRate = locationRate;
+      rate.houseConiditionRate = houseConiditionRate;
+      rate.houseOwnerRate = houseOwnerRate;
       rate.transport = this.createTransport(transport);
       rate.furniture = this.createFurniture(furniture);
       rate.price = this.createPrice(price);

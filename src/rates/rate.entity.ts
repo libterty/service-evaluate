@@ -1,19 +1,17 @@
 import {
-  BaseEntity,
   Entity,
-  PrimaryGeneratedColumn,
   Column,
-  OneToOne,
-  JoinColumn,
+  ObjectID,
+  ObjectIdColumn,
 } from 'typeorm';
 import { Furniture } from './facilities/funiture.entity';
 import { Transport } from './facilities/transport.entity';
 import { Price } from './facilities/price.entity';
 
 @Entity()
-export class Rate extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+export class Rate {
+  @ObjectIdColumn()
+  id: ObjectID;
 
   @Column()
   vender: string;
@@ -21,15 +19,12 @@ export class Rate extends BaseEntity {
   @Column()
   owner: string;
 
-  @OneToOne(() => Furniture)
-  @JoinColumn()
+  @Column(() => Furniture)
   furniture: Furniture;
 
-  @OneToOne(() => Transport)
-  @JoinColumn()
+  @Column(() => Transport)
   transport: Transport;
 
-  @OneToOne(() => Price)
-  @JoinColumn()
+  @Column(() => Price)
   price: Price;
 }

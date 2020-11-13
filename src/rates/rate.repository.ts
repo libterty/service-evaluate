@@ -30,27 +30,22 @@ export class RateRepository extends Repository<Rate> {
    * @param {IFurniture} furnitureDto furniture data tranfer object
    * @returns {Promise<Furniture>}
    */
-  async createFurniture(furnitureDto: IFurniture): Promise<Furniture> {
-    try {
-      const furniture = new Furniture(
-        furnitureDto.refrigerator,
-        furnitureDto.conditioner,
-        furnitureDto.gas,
-        furnitureDto.bed,
-        furnitureDto.desk,
-        furnitureDto.chair,
-        furnitureDto.sofa,
-        furnitureDto.laundry,
-        furnitureDto.heater,
-        furnitureDto.cable,
-        furnitureDto.internet,
-        furnitureDto.wardrobe,
-        furnitureDto.tv,
-      );
-      return await this.repoManager.save(furniture);
-    } catch (error) {
-      throw new CreateWhenError(error.message);
-    }
+  createFurniture(furnitureDto: IFurniture): Furniture {
+    return new Furniture(
+      furnitureDto.refrigerator,
+      furnitureDto.conditioner,
+      furnitureDto.gas,
+      furnitureDto.bed,
+      furnitureDto.desk,
+      furnitureDto.chair,
+      furnitureDto.sofa,
+      furnitureDto.laundry,
+      furnitureDto.heater,
+      furnitureDto.cable,
+      furnitureDto.internet,
+      furnitureDto.wardrobe,
+      furnitureDto.tv,
+    );
   }
 
   /**
@@ -59,19 +54,14 @@ export class RateRepository extends Repository<Rate> {
    * @param {ITransport} transportDto transport data tranfer object
    * @returns {Promise<Transport>}
    */
-  async createTransport(transportDto: ITransport): Promise<Transport> {
-    try {
-      const transport = new Transport(
-        transportDto.bus,
-        transportDto.hsr,
-        transportDto.publicBike,
-        transportDto.subway,
-        transportDto.train,
-      );
-      return await this.repoManager.save(transport);
-    } catch (error) {
-      throw new CreateWhenError(error.message);
-    }
+  createTransport(transportDto: ITransport): Transport {
+    return new Transport(
+      transportDto.bus,
+      transportDto.hsr,
+      transportDto.publicBike,
+      transportDto.subway,
+      transportDto.train,
+    );
   }
 
   /**
@@ -80,18 +70,13 @@ export class RateRepository extends Repository<Rate> {
    * @param {IPrice} priceDto price data transfer object
    * @returns {Promise<Price>}
    */
-  async createPrice(priceDto: IPrice): Promise<Price> {
-    try {
-      const price = new Price(
-        priceDto.deposit,
-        priceDto.monthlyPrice,
-        priceDto.managementFee,
-        priceDto.parkingFee,
-      );
-      return await this.repoManager.save(price);
-    } catch (error) {
-      throw new CreateWhenError(error.message);
-    }
+  createPrice(priceDto: IPrice): Price {
+    return new Price(
+      priceDto.deposit,
+      priceDto.monthlyPrice,
+      priceDto.managementFee,
+      priceDto.parkingFee,
+    );
   }
 
   /**
@@ -106,9 +91,9 @@ export class RateRepository extends Repository<Rate> {
       const rate = new Rate();
       rate.vender = vender;
       rate.owner = owner;
-      rate.transport = await this.createTransport(transport);
-      rate.furniture = await this.createFurniture(furniture);
-      rate.price = await this.createPrice(price);
+      rate.transport = this.createTransport(transport);
+      rate.furniture = this.createFurniture(furniture);
+      rate.price = this.createPrice(price);
       return await this.repoManager.save(rate);
     } catch (error) {
       throw new CreateWhenError(error.message);

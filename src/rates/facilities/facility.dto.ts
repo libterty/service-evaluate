@@ -13,3 +13,18 @@ export interface IFurniture {
   wardrobe?: boolean;
   tv?: boolean;
 }
+
+export interface IPrice {
+  deposit: number;
+  monthlyPrice: number;
+  managementFee: number;
+  parkingFee: number;
+}
+
+export interface ITransport {
+  bus?: boolean;
+  hsr?: boolean;
+  publicBike?: boolean;
+  subway?: boolean;
+  train?: boolean;
+}

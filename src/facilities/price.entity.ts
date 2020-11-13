@@ -1,4 +1,4 @@
-import { Entity, Column } from "typeorm";
+import { Entity, Column } from 'typeorm';
 
 @Entity()
 export class Price {
@@ -18,7 +18,7 @@ export class Price {
     deposit: number,
     monthlyPrice: number,
     managementFee?: number,
-    parkingFee?: number
+    parkingFee?: number,
   ) {
     this.deposit = deposit;
     this.monthlyPrice = monthlyPrice;

@@ -18,11 +18,11 @@ export class Transport {
   train?: boolean;
 
   constructor(
-    bus?: boolean, 
+    bus?: boolean,
     hsr?: boolean,
     publicBike?: boolean,
     subway?: boolean,
-    train?: boolean
+    train?: boolean,
   ) {
     this.bus = !!bus ? bus : false;
     this.hsr = !!hsr ? hsr : false;

@@ -31,5 +31,5 @@ limitations under the License.
 
 ### For more details About API Docs ###
 
-[API General Document](https://github.com/libterty/service-evaluate/tree/master/docs/api.md)
-[Rate Document](hhttps://github.com/libterty/service-evaluate/tree/master/docs/rate.md)
+- [API General Document](https://github.com/libterty/service-evaluate/blob/master/docs/api.md)
+- [Rate Document](https://github.com/libterty/service-evaluate/blob/master/docs/rate.md)

@@ -1,9 +1,4 @@
-import {
-  Entity,
-  Column,
-  ObjectID,
-  ObjectIdColumn,
-} from 'typeorm';
+import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
 import { Furniture } from './facilities/funiture.entity';
 import { Transport } from './facilities/transport.entity';
 import { Price } from './facilities/price.entity';

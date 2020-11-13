@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateWhenError } from 'libs/error';
+import { CreateWhenError, UpdateWhenError } from 'libs/error';
 import { IRate } from './rate.dto';
 import { Rate } from './rate.entity';
 import { RateRepository } from './rate.repository';
@@ -12,22 +12,47 @@ export class RateService {
   ) {}
 
   /**
-   * @description Get Rates By Pagination
+   * @description Get Rate With Pagination
+   * @public
+   * @returns {Promise<Rate[] | Error>}
    */
-  async getRates(): Promise<Rate[] | Error> {
+  public async getRates(): Promise<Rate[] | Error> {
     try {
-      const rates = await this.rateRepository.getRates();
-      return rates;
+      return await this.rateRepository.getRates();
     } catch (error) {
       throw new Error(error.message);
     }
   }
 
-  async createRate(rateDto: IRate): Promise<Rate | Error> {
+  /**
+   * @description Create Rate Entity Service Handler
+   * @public
+   * @param {IRate} rateDto rate data transfer object
+   * @returns {Promise<Rate | Error>}
+   */
+  public async createRate(rateDto: IRate): Promise<Rate | Error> {
     try {
       return await this.rateRepository.createRate(rateDto);
     } catch (error) {
       throw new CreateWhenError(error.message);
+    }
+  }
+
+  /**
+   * @description Update Rate By Id
+   * @description Not sure if wanted to let user update Rate because rate is kind of transaction log
+   * @description And it's a readonly like db for end user
+   * @deprecated
+   * @public
+   * @param {string} id rate primary key
+   * @param {IRate} rateDto rate data transfer object
+   * @returns {Promise<unknown>}
+   */
+  public async updateRate(id: string, rateDto: IRate): Promise<unknown> {
+    try {
+      return await this.rateRepository.updateRate(id, rateDto);
+    } catch (error) {
+      throw new UpdateWhenError(error.message);
     }
   }
 }

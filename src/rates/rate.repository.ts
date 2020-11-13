@@ -1,5 +1,10 @@
-import { CreateWhenError, ReadWhenError } from 'libs/error';
-import { Repository, EntityRepository, getMongoManager } from 'typeorm';
+import { CreateWhenError, ReadWhenError, UpdateWhenError } from 'libs/error';
+import {
+  Repository,
+  EntityRepository,
+  getMongoManager,
+} from 'typeorm';
+import { merge } from 'lodash';
 import { IFurniture, IPrice, ITransport } from './facilities/facility.dto';
 import { Furniture } from './facilities/funiture.entity';
 import { Price } from './facilities/price.entity';
@@ -15,7 +20,7 @@ export class RateRepository extends Repository<Rate> {
    * @public
    * @returns {Promise<Rate[]>}
    */
-  async getRates(): Promise<Rate[]> {
+  public async getRates(): Promise<Rate[]> {
     try {
       const rates: Rate[] = await this.repoManager.find(Rate);
       return rates;
@@ -30,7 +35,7 @@ export class RateRepository extends Repository<Rate> {
    * @param {IFurniture} furnitureDto furniture data tranfer object
    * @returns {Promise<Furniture>}
    */
-  createFurniture(furnitureDto: IFurniture): Furniture {
+  private createFurniture(furnitureDto: IFurniture): Furniture {
     return new Furniture(
       furnitureDto.refrigerator,
       furnitureDto.conditioner,
@@ -54,7 +59,7 @@ export class RateRepository extends Repository<Rate> {
    * @param {ITransport} transportDto transport data tranfer object
    * @returns {Promise<Transport>}
    */
-  createTransport(transportDto: ITransport): Transport {
+  private createTransport(transportDto: ITransport): Transport {
     return new Transport(
       transportDto.bus,
       transportDto.hsr,
@@ -70,7 +75,7 @@ export class RateRepository extends Repository<Rate> {
    * @param {IPrice} priceDto price data transfer object
    * @returns {Promise<Price>}
    */
-  createPrice(priceDto: IPrice): Price {
+  private createPrice(priceDto: IPrice): Price {
     return new Price(
       priceDto.deposit,
       priceDto.monthlyPrice,
@@ -83,9 +88,9 @@ export class RateRepository extends Repository<Rate> {
    * @description Create Rate Entity Repository Handler
    * @public
    * @param {IRate} rateDto rate data transfer object
-   * @returns {Promise<Rate>}
+   * @returns {Promise<Rate | Error>}
    */
-  async createRate(rateDto: IRate): Promise<Rate> {
+  public async createRate(rateDto: IRate): Promise<Rate | Error> {
     try {
       const { vender, owner, transport, furniture, price } = rateDto;
       const rate = new Rate();
@@ -94,9 +99,45 @@ export class RateRepository extends Repository<Rate> {
       rate.transport = this.createTransport(transport);
       rate.furniture = this.createFurniture(furniture);
       rate.price = this.createPrice(price);
-      return await this.repoManager.save(rate);
+      return await this.repoManager.save<Rate>(rate);
     } catch (error) {
       throw new CreateWhenError(error.message);
+    }
+  }
+
+  /**
+   * @description Update Rate By Id
+   * @description Not sure if wanted to let user update Rate because rate is kind of transaction log
+   * @description And it's a readonly like db for end user
+   * @deprecated
+   * @public
+   * @param {string} id rate primary key
+   * @param {IRate} rateDto rate data transfer object
+   * @returns {Promise<unknown>}
+   */
+  async updateRate(id: string, rateDto: IRate): Promise<unknown> {
+    try {
+      return new Promise((resolve, reject) => {
+        this.repoManager
+          .transaction(transactionManager => {
+            return transactionManager
+              .createQueryBuilder(Rate, 'Rate')
+              .setLock('pessimistic_write')
+              .whereInIds(id)
+              .getOne()
+              .then(existedData => {
+                if (!existedData)
+                  throw new ReadWhenError(`DB Record ${id} Not Found`);
+                const updated_data: IRate = merge(existedData, rateDto);
+                return transactionManager
+                  .save(updated_data)
+                  .then(done => resolve(done));
+              });
+          })
+          .catch(err => reject(err));
+      });
+    } catch (error) {
+      throw new UpdateWhenError(error.message);
     }
   }
 }

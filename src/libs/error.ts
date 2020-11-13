@@ -43,8 +43,8 @@ export class UpdateParamTypeError extends ErrorBase {
 }
 
 export class UpdateWhenError extends ErrorBase {
-  constructor(func, error_message) {
-    super(`${func} Update Function Error: ${error_message}`);
+  constructor(error_message) {
+    super(`Update Function Error: ${error_message}`);
   }
 }
 

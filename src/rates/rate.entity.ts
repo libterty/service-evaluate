@@ -14,6 +14,21 @@ export class Rate {
   @Column()
   owner: string;
 
+  @Column()
+  averageRate: number;
+
+  @Column()
+  noiseRate: number;
+
+  @Column()
+  locationRate: number;
+
+  @Column()
+  houseConiditionRate: number;
+
+  @Column()
+  houseOwnerRate: number;
+
   @Column(() => Furniture)
   furniture: Furniture;
 

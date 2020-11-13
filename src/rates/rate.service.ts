@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateWhenError, UpdateWhenError } from 'libs/error';
-import { IRate } from './rate.dto';
+import { IPage, IRate } from './rate.dto';
 import { Rate } from './rate.entity';
 import { RateRepository } from './rate.repository';
 
@@ -14,13 +18,53 @@ export class RateService {
   /**
    * @description Get Rate With Pagination
    * @public
+   * @param {IPage} searchDto rate search dto
    * @returns {Promise<Rate[] | Error>}
    */
-  public async getRates(): Promise<Rate[] | Error> {
+  public async getRates(
+    searchDto: IPage,
+  ): Promise<{ rates: Rate[]; count: number } | Error> {
     try {
-      return await this.rateRepository.getRates();
+      if (searchDto.skip && !Number.isInteger(searchDto.skip))
+        return new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Skip Must be a Integer',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      if (searchDto.take && !Number.isInteger(searchDto.take))
+        return new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Take Must be a Integer',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+
+      const { rates, count } = await this.rateRepository.getRates(searchDto);
+
+      if (!rates || !count)
+        return new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: 'Rate Not Found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+
+      return {
+        rates,
+        count,
+      };
     } catch (error) {
-      throw new Error(error.message);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Get Rates Error',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -32,9 +76,26 @@ export class RateService {
    */
   public async createRate(rateDto: IRate): Promise<Rate | Error> {
     try {
-      return await this.rateRepository.createRate(rateDto);
+      const rate = await this.rateRepository.createRate(rateDto);
+
+      if (typeof rate !== 'object')
+        return new HttpException(
+          {
+            status: HttpStatus.CONFLICT,
+            error: 'Rate Creat Fail',
+          },
+          HttpStatus.CONFLICT,
+        );
+
+      return rate;
     } catch (error) {
-      throw new CreateWhenError(error.message);
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Create Rate Error',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -52,7 +113,13 @@ export class RateService {
     try {
       return await this.rateRepository.updateRate(id, rateDto);
     } catch (error) {
-      throw new UpdateWhenError(error.message);
+      throw new HttpException(
+        {
+          status: HttpStatus.CONFLICT,
+          error: 'Update Rate Error',
+        },
+        HttpStatus.CONFLICT,
+      );
     }
   }
 }

@@ -2,9 +2,32 @@
   "name": "service-evaluate",
   "version": "0.0.1",
   "description": "",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "author": "11",
+  "contributors": [
+    "Gary",
+    "Alex Liang", 
+    "Mia",
+    "Mike Huang",
+    "Sam Lin", 
+    "Tom",
+    "熊寶", 
+    "Red"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/libterty/service-evaluate.git"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "private": false,
+  "license": "Apache-2.0",
+  "licenses": [
+    {
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    }
+  ],
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",

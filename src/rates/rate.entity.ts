@@ -1,4 +1,11 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Furniture } from './facilities/funiture.entity';
 import { Transport } from './facilities/transport.entity';
 import { Price } from './facilities/price.entity';

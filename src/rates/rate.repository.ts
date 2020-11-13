@@ -1,5 +1,5 @@
 import { Repository, EntityRepository, getManager } from 'typeorm';
-import { Rate } from "./rate.entity";
+import { Rate } from './rate.entity';
 
 @EntityRepository(Rate)
 export class RateRepository extends Repository<Rate> {

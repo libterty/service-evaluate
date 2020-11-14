@@ -1,6 +1,4 @@
 import {
-  HttpException,
-  HttpStatus,
   Injectable,
   Logger,
   NestMiddleware,
@@ -8,7 +6,6 @@ import {
 import { Request, Response, NextFunction } from 'express';
 import * as proxyaddr from 'proxy-addr';
 import Redis from 'ioredis';
-import moment from 'moment';
 import { config } from '../../config';
 const redisClient = new Redis(config.REDIS_URL);
 
@@ -33,21 +30,21 @@ export class RateMiddleware implements NestMiddleware {
         Logger.log(err.message, 'REDIS-RATE-LIMIT-ERR', true);
         process.exit(0);
       }
-
       if (reply === 1) {
         redisClient.get(addr, (err, response) => {
           if (err) {
             Logger.log(err.message, 'REDIS-RATE-LIMIT-ERR', true);
           }
-
+          console.log('response', response)
           const data = JSON.parse(response);
-          const current_time: number = moment().unix();
-          const idle_time: number = moment()
-            .subtract(1, 'minute')
-            .unix();
-          const request_count_per_minutes = data.filter(
-            item => item.request_time > idle_time,
-          );
+          const current_time: string = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
+          const idle_time = new Date(current_time).setMinutes(new Date(current_time).getMinutes() - 1);
+          const request_count_per_minutes = data.filter((item: IRateLimit) => {
+            const diff_time = (new Date(item.request_time).getMinutes() - new Date(idle_time).getMinutes());
+            if (new Date(item.request_time) > new Date(idle_time)) return item;
+            if (diff_time < 0) redisClient.del(addr);
+            return item;
+          });
 
           let threshold = 0;
           Logger.log(
@@ -77,7 +74,7 @@ export class RateMiddleware implements NestMiddleware {
 
           if (!is_found) {
             data.push({
-              request_time: current_time,
+              request_time: new Date(current_time),
               counter: 1,
             });
           }
@@ -92,10 +89,10 @@ export class RateMiddleware implements NestMiddleware {
       } else {
         const data = [];
         data.push({
-          request_time: moment().unix(),
+          request_time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
           counter: 1,
         });
-        redisClient.set(addr, JSON.stringify(data));
+        redisClient.set(addr, JSON.stringify(data), "EX", 1);
         next();
       }
     });

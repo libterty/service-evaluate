@@ -59,7 +59,6 @@
     "fastify-swagger": "^3.5.0",
     "ioredis": "^4.19.2",
     "lodash": "^4.17.20",
-    "moment": "^2.29.1",
     "mongodb": "^3.6.3",
     "proxy-addr": "^2.0.6",
     "reflect-metadata": "^0.1.13",

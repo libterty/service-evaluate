@@ -11,6 +11,7 @@
 ### **Parameter in Search All Rate Records:**
 
 | Parameter             | Description                                                                                | Type         | In         |
+| --------              | --------                                                                                   | --------     | --------   |
 | takes(Optional)       | Offset (paginated) - where from entities should be taken.                                  | number       | Query      |
 | skip(Optional)        | Limit (paginated) - max number of entities should be taken.                                | number       | Query      |
 
@@ -96,6 +97,7 @@ curl --request GET '/v1.0/api/rates?takes=<takes>&skip=<skip>'
 ### **Parameter in Create Rate Record**
 
 | Parameter             | Description                                                                                | Type         | In         |
+| --------              | --------                                                                                   | --------     | --------   |
 | averageRate(Required) | Average rate of the house.                                                                 | number       | body       |
 | noiseRate(Required)   | Noise rate around the house.                                                               | number       | body       |
 | locationRate(Required)| Location rate around house.                                                                | number       | body       |

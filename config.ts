@@ -81,6 +81,7 @@ const configs = {
       password: process.env.DB_PASSWORD || '123',
       database: process.env.DB_DATABASE || 'lib',
     },
+    REDIS_URL: process.env.REDIS_RATE_LIMIT_URL || "redis://127.0.0.1:6379",
   },
   development: {},
   production: {

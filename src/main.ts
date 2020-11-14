@@ -1,21 +1,12 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
+import { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import fastifyCors from 'fastify-cors';
 import { AppModule } from './app.module';
 import { config } from '../config';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter({
-      trustProxy: true,
-    }),
-  );
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule);
 
   const docOpts = new DocumentBuilder()
     .setTitle(config.TITLE)
@@ -32,7 +23,7 @@ async function bootstrap() {
     }),
   );
   app.setGlobalPrefix(`${config.PREFIX}${config.API_EXPLORER_PATH}`);
-  app.register(fastifyCors, {
+  app.enableCors({
     credentials: true,
     origin: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],

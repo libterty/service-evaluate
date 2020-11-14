@@ -58,7 +58,7 @@ export class RateMiddleware implements NestMiddleware {
             threshold += item.counter;
           });
           Logger.log(threshold, 'threshold', true);
-          if (threshold >= 10) {
+          if (threshold >= 100) {
             Logger.log(addr, 'REDIS-RATE-LIMIT-ECEED', true);
             return res
               .status(429)

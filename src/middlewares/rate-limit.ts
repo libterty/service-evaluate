@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  Logger,
-  NestMiddleware,
-} from '@nestjs/common';
+import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import * as proxyaddr from 'proxy-addr';
 import Redis from 'ioredis';
@@ -35,12 +31,18 @@ export class RateMiddleware implements NestMiddleware {
           if (err) {
             Logger.log(err.message, 'REDIS-RATE-LIMIT-ERR', true);
           }
-          console.log('response', response)
+          console.log('response', response);
           const data = JSON.parse(response);
-          const current_time: string = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
-          const idle_time = new Date(current_time).setMinutes(new Date(current_time).getMinutes() - 1);
+          const current_time: string = new Date().toLocaleString('zh-TW', {
+            timeZone: 'Asia/Taipei',
+          });
+          const idle_time = new Date(current_time).setMinutes(
+            new Date(current_time).getMinutes() - 1,
+          );
           const request_count_per_minutes = data.filter((item: IRateLimit) => {
-            const diff_time = (new Date(item.request_time).getMinutes() - new Date(idle_time).getMinutes());
+            const diff_time =
+              new Date(item.request_time).getMinutes() -
+              new Date(idle_time).getMinutes();
             if (new Date(item.request_time) > new Date(idle_time)) return item;
             if (diff_time < 0) redisClient.del(addr);
             return item;
@@ -56,7 +58,7 @@ export class RateMiddleware implements NestMiddleware {
             threshold += item.counter;
           });
           Logger.log(threshold, 'threshold', true);
-          if (threshold >= 10) {
+          if (threshold >= 100) {
             Logger.log(addr, 'REDIS-RATE-LIMIT-ECEED', true);
             return res
               .status(429)
@@ -89,10 +91,12 @@ export class RateMiddleware implements NestMiddleware {
       } else {
         const data = [];
         data.push({
-          request_time: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' }),
+          request_time: new Date().toLocaleString('zh-TW', {
+            timeZone: 'Asia/Taipei',
+          }),
           counter: 1,
         });
-        redisClient.set(addr, JSON.stringify(data), "EX", 1);
+        redisClient.set(addr, JSON.stringify(data), 'EX', 1);
         next();
       }
     });

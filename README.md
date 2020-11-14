@@ -33,3 +33,15 @@ limitations under the License.
 
 - [API General Document](https://github.com/libterty/service-evaluate/blob/master/docs/api.md)
 - [Rate Document](https://github.com/libterty/service-evaluate/blob/master/docs/rate.md)
+
+## Contributors ##
+
+- [11](https://github.com/libterty)
+- [Gary Chu](https://github.com/schaoss)
+- [Alex Liang](https://alexliang.me/)
+- [Mia](https://github.com/miayang0513)
+- [Mike Huang]()
+- [Sam Lin](https://github.com/Swingcloud)
+- [Tom]()
+- [熊寶]()
+- [Red]()

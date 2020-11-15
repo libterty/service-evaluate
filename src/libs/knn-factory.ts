@@ -1,7 +1,13 @@
-import KNNSimple from './knn';
+import KNNSimple from './knn-simple';
 
 /**
  * @classdesc K Nearest Neighbor Factory Function
+ * @example import KNNData from '../../public/knn/price-rate-example.json';
+ * const data = KNNData.sample;
+ * data.data is a dataset collection containing average rate with trading amounts (rent total amount) the datset is formed as metrix
+ * data.lables is the label that represents collection of data.data is being traded or not, in here i use `resolve` as trade `reject` as not trade
+ * const knn = KNNFactory.createResult('simple', 5, data.data, data.labels);
+ * console.log(knn.predict([6, 6500]));
  */
 export class KNNFactory {
   /**
@@ -27,12 +33,3 @@ export class KNNFactory {
     }
   }
 }
-
-import KNNData from '../../public/knn/price-rate-example.json';
-const data = KNNData.sample;
-/**
- * @description data.data is a dataset collection containing average rate with trading amounts (rent total amount) the datset is formed as metrix
- * @description data.lables is the label that represents collection of data.data is being traded or not, in here i use `resolve` as trade `reject` as not trade
- */
-const knn = KNNFactory.createResult('simple', 5, data.data, data.labels);
-console.log(knn.predict([6, 6500]));

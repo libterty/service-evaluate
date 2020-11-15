@@ -1,0 +1,27 @@
+{
+  "sample": {
+    "data": [
+      [3, 9000],
+      [4, 9500],
+      [3.5, 8000],
+      [8, 20000],
+      [9, 55000],
+      [10, 90000],
+      [2, 5000],
+      [7, 19000],
+      [7.5, 18900]
+    ],
+    "labels": [
+      "resolve",
+      "reject",
+      "resolve",
+      "resolve",
+      "resolve",
+      "resolve",
+      "reject",
+      "resolve",
+      "resolve",
+      "resolve"
+    ]
+  } 
+}

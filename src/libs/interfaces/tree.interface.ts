@@ -9,7 +9,7 @@ export interface IObject {
 
 export interface IKDNode {
   obj: TKDNodeObj;
-  dimension: number | null;
+  dimensions: number | null;
   parent: IKDNode | null;
   left: IKDNode | null;
   right: IKDNode | null;

@@ -14,18 +14,18 @@ import * as IKDTree from './interfaces';
 
 class KDNode {
   public obj: IKDTree.TKDNodeObj;
-  public dimension: any;
+  public dimensions: any;
   public parent: IKDTree.IKDNode;
   public left: any;
   public right: any;
 
   constructor(
     obj: IKDTree.TKDNodeObj,
-    dimension: IKDTree.TDimension,
+    dimensions: IKDTree.TDimension,
     parent: IKDTree.IKDNode,
   ) {
     this.obj = obj;
-    this.dimension = dimension;
+    this.dimensions = dimensions;
     this.parent = parent;
     this.left = null;
     this.right = null;
@@ -33,7 +33,7 @@ class KDNode {
 }
 
 function toJSONImpl(src: IKDTree.IKDNode) {
-  const dest = new KDNode(src.obj, src.dimension, null);
+  const dest = new KDNode(src.obj, src.dimensions, null);
   if (src.left) dest.left = toJSONImpl(src.left);
   if (src.right) dest.right = toJSONImpl(src.right);
   return dest;
@@ -106,6 +106,20 @@ class KDTree {
       this.root = buildTree(points, 0, null, this.dimensions);
     }
     this.metric = metric;
+  }
+
+  toJson (): KDNode {
+    const result: KDNode = toJSONImpl(this.root);
+    result.dimensions = this.dimensions;
+    return result;
+  }
+
+  nearest (point, maxNodes, maxMetrics) {
+    const mertic: IKDTree.TMetrix = this.metric;
+    const dimensions: any[] = this.dimensions;
+    let i;
+
+    // todo
   }
 }
 

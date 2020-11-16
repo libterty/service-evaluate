@@ -108,13 +108,13 @@ class KDTree {
     this.metric = metric;
   }
 
-  toJson (): KDNode {
+  toJson(): KDNode {
     const result: KDNode = toJSONImpl(this.root);
     result.dimensions = this.dimensions;
     return result;
   }
 
-  nearest (point, maxNodes, maxMetrics) {
+  nearest(point, maxNodes, maxMetrics) {
     const mertic: IKDTree.TMetrix = this.metric;
     const dimensions: any[] = this.dimensions;
     let i;

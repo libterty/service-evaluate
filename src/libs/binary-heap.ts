@@ -21,7 +21,7 @@ export default class BinarHeap {
    * @param {any} ele
    * @returns {void}
    */
-  push (ele: any) {
+  push(ele: any) {
     this.content.push(ele);
     this.bubbleup(this.content.length - 1);
   }
@@ -34,7 +34,7 @@ export default class BinarHeap {
    * [3, 4, 5, 6, 8, 7] 6 no is smaller then both of its children, all good
    * @returns {void}
    */
-  pop () {
+  pop() {
     const result: any = this.peek();
     const end: any = this.content.pop();
 
@@ -45,7 +45,7 @@ export default class BinarHeap {
     return result;
   }
 
-  remove (node: any) {
+  remove(node: any) {
     const length: number = this.size();
 
     for (let i = 0; i < length; i++) {
@@ -70,7 +70,7 @@ export default class BinarHeap {
    * @description Check Root
    * @returns {any}
    */
-  peek (): any {
+  peek(): any {
     return this.content[0];
   }
 
@@ -78,7 +78,7 @@ export default class BinarHeap {
    * @description Heap Size Check
    * @returns {number}
    */
-  size (): number {
+  size(): number {
     return this.content.length;
   }
 
@@ -87,7 +87,7 @@ export default class BinarHeap {
    * @param {number} index
    * @returns {void}
    */
-  bubbleup (index: number) {
+  bubbleup(index: number) {
     const element: any = this.content[index];
 
     while (index > 0) {
@@ -112,7 +112,7 @@ export default class BinarHeap {
    * @param {number} index
    * @returns {void}
    */
-  sinkDown (index: number) {
+  sinkDown(index: number) {
     const length: number = this.content.length;
     const element: any = this.content[index];
     const elemScore: number = this.scoreFunc(element);
@@ -133,7 +133,8 @@ export default class BinarHeap {
       const child2: any = this.content[child2N];
       const child2Score: number = this.scoreFunc(child2);
       if (child2N < length) {
-        if (child2Score < (swap === null ? elemScore : child1Score)) swap = child2N;
+        if (child2Score < (swap === null ? elemScore : child1Score))
+          swap = child2N;
       }
       // if order is not yet finish
       if (swap !== null) {

@@ -20,8 +20,16 @@ export class RateController {
   @Get()
   @UsePipes(ValidationPipe)
   getRates(
-    @Query('take', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) take: number,
-    @Query('skip', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE })) skip: number,
+    @Query(
+      'take',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    take: number,
+    @Query(
+      'skip',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    skip: number,
   ): Promise<{ rates: Rate[]; count: number } | Error> {
     const searchDto = { take, skip };
     return this.rateService.getRates(searchDto);

@@ -1,13 +1,19 @@
 import { CreateWhenError, ReadWhenError, UpdateWhenError } from 'libs/error';
-import { Repository, EntityRepository, getMongoManager } from 'typeorm';
+import {
+  Repository,
+  EntityRepository,
+  getMongoManager,
+  UpdateResult,
+} from 'typeorm';
 import { merge } from 'lodash';
 import { IFurniture, IPrice, ITransport } from './facilities/facility.dto';
 import { Furniture } from './facilities/funiture.entity';
 import { Price } from './facilities/price.entity';
 import { Transport } from './facilities/transport.entity';
-import { IPage, IRateCreate } from './rate.dto';
+import { IPage, IRate, IRateCreate } from './rate.dto';
 import { Rate } from './rate.entity';
 import { ConflictException, Logger } from '@nestjs/common';
+import { isEmptyObj } from '../libs/utils';
 
 @EntityRepository(Rate)
 export class RateRepository extends Repository<Rate> {
@@ -192,22 +198,86 @@ export class RateRepository extends Repository<Rate> {
    * @description Update Rate By Id
    * @description Not sure if wanted to let user update Rate because rate is kind of transaction log
    * @description And it's a readonly like db for end user
-   * @deprecated
    * @public
-   * @param {string} id rate primary key
+   * @param {number} id rate primary key
    * @param {IRateCreate} rateDto rate data transfer object
    * @returns {Promise<unknown>}
    */
-  async updateRate(id: string, rateDto: IRateCreate): Promise<Rate> {
+  async updateRate(
+    id: number,
+    rateDto: IRateCreate,
+  ): Promise<{ status: string; message: string }> {
     try {
-      let rate = await Rate.findOne({ where: { id } });
+      const rate = await Rate.findOne({
+        where: { id },
+        relations: ['furniture', 'price', 'transport'],
+      });
       if (!rate) throw new ConflictException(`Rate ${id} not exists`);
 
-      // deep merge
-      rate = merge(rate, rateDto);
+      const newRate = Object.assign(rate, rateDto);
+      const updateRate = {
+        vender: newRate.vender,
+        owner: newRate.owner,
+        averageRate: newRate.averageRate,
+        noiseRate: newRate.noiseRate,
+        locationRate: newRate.locationRate,
+        houseConiditionRate: newRate.houseConiditionRate,
+        houseOwnerRate: newRate.houseOwnerRate,
+        rateCount: newRate.rateCount,
+      };
 
-      return await rate.save();
+      if (!isEmptyObj(rateDto.transport) && rate.transport.id) {
+        await this.createQueryBuilder()
+          .update(Transport)
+          .set(
+            Object.assign(
+              rate.transport ? rate.transport : {},
+              rateDto.transport,
+            ),
+          )
+          .andWhere('id = :id', { id: rate.transport.id })
+          .execute();
+      } else if (!isEmptyObj(rateDto.transport) && !rate.transport.id) {
+        updateRate['transport'] = await this.createTransport(rateDto.transport);
+      }
+
+      if (!isEmptyObj(rateDto.price) && rate.price.id) {
+        await this.createQueryBuilder()
+          .update(Price)
+          .set(Object.assign(rate.price ? rate.price : {}, rateDto.price))
+          .andWhere('id = :id', { id: rate.price.id })
+          .execute();
+      } else if (!isEmptyObj(rateDto.price) && !rate.price.id) {
+        updateRate['price'] = await this.createPrice(rateDto.price);
+      }
+
+      if (!isEmptyObj(rateDto.furniture) && rate.furniture.id) {
+        await this.createQueryBuilder()
+          .update(Furniture)
+          .set(
+            Object.assign(
+              rate.furniture ? rate.furniture : {},
+              rateDto.furniture,
+            ),
+          )
+          .andWhere('id = :id', { id: rate.furniture.id })
+          .execute();
+      } else if (!isEmptyObj(rateDto.furniture) && !rate.furniture.id) {
+        updateRate['furniture'] = await this.createFurniture(rateDto.furniture);
+      }
+
+      await this.createQueryBuilder()
+        .update(Rate)
+        .set(updateRate)
+        .andWhere('id = :id', { id })
+        .execute();
+
+      return {
+        status: 'success',
+        message: `Update Rate: ${id} success`,
+      };
     } catch (error) {
+      Logger.log(error.message, 'UpdateRate', true);
       throw new UpdateWhenError(error.message);
     }
   }

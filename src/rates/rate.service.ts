@@ -5,6 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateResult } from 'typeorm';
 import { IPage, IRate, IRateCreate } from './rate.dto';
 import { Rate } from './rate.entity';
 import { RateRepository } from './rate.repository';
@@ -132,13 +133,15 @@ export class RateService {
    * @description Update Rate By Id
    * @description Not sure if wanted to let user update Rate because rate is kind of transaction log
    * @description And it's a readonly like db for end user
-   * @deprecated
    * @public
    * @param {string} id rate primary key
-   * @param {IRate} rateDto rate data transfer object
+   * @param {IRateCreate} rateDto rate data transfer object
    * @returns {Promise<unknown>}
    */
-  public async updateRate(id: string, rateDto: IRate): Promise<unknown> {
+  public async updateRate(
+    id: number,
+    rateDto: IRateCreate,
+  ): Promise<{ status: string; message: string }> {
     try {
       return await this.rateRepository.updateRate(id, rateDto);
     } catch (error) {

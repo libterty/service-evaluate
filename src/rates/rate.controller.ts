@@ -6,10 +6,12 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { UpdateResult } from 'typeorm';
 import { IRateCreate } from './rate.dto';
 import { Rate } from './rate.entity';
 import { RateService } from './rate.service';
@@ -45,5 +47,14 @@ export class RateController {
   @UsePipes(ValidationPipe)
   createRate(@Body() rateDto: IRateCreate): Promise<Rate | Error> {
     return this.rateService.createRate(rateDto);
+  }
+
+  @Put('/:id')
+  @UsePipes(ValidationPipe)
+  updateRate(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() rateDto: IRateCreate,
+  ): Promise<{ status: string; message: string } | Error> {
+    return this.rateService.updateRate(id, rateDto);
   }
 }

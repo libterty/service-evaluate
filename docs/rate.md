@@ -53,7 +53,7 @@
 
 ## **Search All Rate Records:**
 
-- Record all user transactions allow you to search Rate data. And it's default with pagination design which start with first pages. With slow query methods we will log your action to database for security references at next step.
+- Record all rate transactions allow you to search Rate data. And it's default with pagination design which start with first pages. With slow query methods we will log your action to database for security references at next step.
 
 ### **Parameter in Search All Rate Records:**
 
@@ -86,7 +86,7 @@
   **Content** `{ status: "error", error: "Rate Not Found", }`
 
 - **Code:** 500 <br />
-  **Content** `{ status: "error", error: "Get Rates Error", }`
+  **Content** `{ status: "error", error: string, }`
 
 #### Example Request
 
@@ -97,6 +97,8 @@ curl --request GET '/v1.0/api/rates?takes=<takes>&skip=<skip>'
 -----------
 
 ## **Get Rate Record By Id:**
+
+- Record rate transaction data by Primary Key.
 
 | Parameter             | Description                                                                                | Type         | In         |
 | --------              | --------                                                                                   | --------     | --------   |
@@ -125,7 +127,7 @@ curl --request GET '/v1.0/api/rates?takes=<takes>&skip=<skip>'
   **Content** `{ status: "error", error: "Rate <RateId> Not Found", }`
 
 - **Code:** 500 <br />
-  **Content** `{ status: "error", error: "Get Rate Error", }`
+  **Content** `{ status: "error", error: string, }`
 
 #### Example Request
 
@@ -224,21 +226,114 @@ curl --request GET '/v1.0/api/rates/<rateId>'
 
 `POST /v1.0/api/rates`
 
+- **Code:** 200 <br />
+  **Content**
+  ```typescript
+  {
+    IRate
+  }
+  ```
+
 #### **Error Response**
 
 - **Code:** 400 <br />
   **Content** `{ statusCode: 400, error: "Bad Request"; message: "Bad Request" | "Error Message"[], }`
 
 - **Code:** 409 <br />
-  **Content** `{ status: "error", error: "Rate Creat Fail", }`
+  **Content** `{ status: "error", error: "Rate Create Fail", }`
 
 - **Code:** 500 <br />
-  **Content** `{ status: "error", error: "Create Rate Error", }`
+  **Content** `{ status: "error", error: string, }`
 
 #### Example Request
 
 ```bash
 curl --request POST '/v1.0/api/rates' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "vender": "591 租屋網",
+    "owner": "lib-test1",
+    "noiseRate": 3,
+    "locationRate": 8,
+    "houseConiditionRate": 9,
+    "houseOwnerRate": 3,
+    "furniture": {},
+    "transport": {},
+    "price": {
+        "deposit": 30000,
+        "monthlyPrice": 15000,
+        "managementFee": 0,
+        "parkingFee": 200
+    }
+}'
+```
+
+## **Update Rate Record By Id:**
+
+- Update rate transaction data by Primary Key.
+
+### **Parameter in Create Rate Record**
+
+| Parameter             | Description                                                                                | Type         | In         |
+| --------              | --------                                                                                   | --------     | --------   |
+| id(Required)          | Primary Key of the Rate Table.                                                             | number       | param       |
+| noiseRate(Optional)   | Noise rate around the house.                                                               | number       | body       |
+| locationRate(Optional)| Location rate around house.                                                                | number       | body       |
+| houseOwnerRate(Optional)| House Owner rate.                                                                        | number       | body       |
+| monthlyPrice(Optional)| monthlyPrice Amount.                                                                       | number       | body       |
+| vender(Optional)      | vender name.                                                                               | string       | body       |
+| owner(Optional)       | owner name.                                                                                | string       | body       |
+| deposit(Optional)     | deposit Amount.                                                                            | number       | body       |
+| monthlyPrice(Optional)| monthlyPrice Amount.                                                                       | number       | body       |
+| managementFee(Optional)| managementFee Amount.                                                                     | number       | body       |
+| parkingFee(Optional)  | parkingFee Amount.                                                                         | number       | body       |
+| bus(Optional)         | Bus Transportation.                                                                        | boolean      | body       |
+| hsr(Optional)         | Hsr Transportation.                                                                        | boolean      | body       |
+| publicBike(Optional)  | publicBike Transportation.                                                                 | boolean      | body       |
+| subway(Optional)      | subway Transportation.                                                                     | boolean      | body       |
+| train(Optional)       | train Transportation.                                                                      | boolean      | body       |
+| refrigerator(Optional)| refrigerator furniture.                                                                    | boolean      | body       |
+| conditioner(Optional) | conditioner furniture.                                                                     | boolean      | body       |
+| gas(Optional)         | gas furniture.                                                                             | boolean      | body       |
+| bed(Optional)         | bed furniture.                                                                             | boolean      | body       |
+| desk(Optional)        | desk furniture.                                                                            | boolean      | body       |
+| chair(Optional)       | chair furniture.                                                                           | boolean      | body       |
+| sofa(Optional)        | sofa furniture.                                                                            | boolean      | body       |
+| laundry(Optional)     | laundry furniture.                                                                         | boolean      | body       |
+| heater(Optional)      | heater furniture.                                                                          | boolean      | body       |
+| cable(Optional)       | cable furniture.                                                                           | boolean      | body       |
+| internet(Optional)    | internet furniture.                                                                        | boolean      | body       |
+| wardrobe(Optional)    | wardrobe furniture.                                                                        | boolean      | body       |
+| tv(Optional)          | tv furniture.                                                                              | boolean      | body       |
+
+### **Method**
+
+`PUT /v1.0/api/rates/<rateId>`
+
+- **Code:** 200 <br />
+  **Content**
+  ```typescript
+  {
+    status: "success",
+    message: "Update Rate: <rateId> success"
+  }
+  ```
+
+#### **Error Response**
+
+- **Code:** 400 <br />
+  **Content** `{ statusCode: 400, error: "Bad Request"; message: "Bad Request" | "Error Message"[], }`
+
+- **Code:** 409 <br />
+  **Content** `{ status: "error", error: "Rate Update Fail", }`
+
+- **Code:** 500 <br />
+  **Content** `{ status: "error", error: string, }`
+
+#### Example Request
+
+```bash
+curl --request PUT '/v1.0/api/rates/<rateId>' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "vender": "591 租屋網",

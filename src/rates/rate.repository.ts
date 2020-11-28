@@ -5,8 +5,9 @@ import { IFurniture, IPrice, ITransport } from './facilities/facility.dto';
 import { Furniture } from './facilities/funiture.entity';
 import { Price } from './facilities/price.entity';
 import { Transport } from './facilities/transport.entity';
-import { IPage, IRate } from './rate.dto';
+import { IPage, IRateCreate } from './rate.dto';
 import { Rate } from './rate.entity';
+import { ConflictException, Logger } from '@nestjs/common';
 
 @EntityRepository(Rate)
 export class RateRepository extends Repository<Rate> {
@@ -27,12 +28,14 @@ export class RateRepository extends Repository<Rate> {
       const [rates, count] = await this.repoManager.findAndCount(Rate, {
         take,
         skip,
+        relations: ['furniture', 'price', 'transport'],
       });
       return {
         rates,
         count,
       };
     } catch (error) {
+      Logger.log(error.message, 'GetRates', true);
       throw new ReadWhenError(error.message);
     }
   }
@@ -43,22 +46,41 @@ export class RateRepository extends Repository<Rate> {
    * @param {IFurniture} furnitureDto furniture data tranfer object
    * @returns {Promise<Furniture>}
    */
-  private createFurniture(furnitureDto: IFurniture): Furniture {
-    return new Furniture(
-      furnitureDto.refrigerator,
-      furnitureDto.conditioner,
-      furnitureDto.gas,
-      furnitureDto.bed,
-      furnitureDto.desk,
-      furnitureDto.chair,
-      furnitureDto.sofa,
-      furnitureDto.laundry,
-      furnitureDto.heater,
-      furnitureDto.cable,
-      furnitureDto.internet,
-      furnitureDto.wardrobe,
-      furnitureDto.tv,
-    );
+  private async createFurniture(furnitureDto: IFurniture): Promise<Furniture> {
+    const {
+      refrigerator,
+      conditioner,
+      gas,
+      bed,
+      desk,
+      chair,
+      sofa,
+      laundry,
+      heater,
+      cable,
+      internet,
+      wardrobe,
+      tv,
+    } = furnitureDto;
+    const furniture = new Furniture();
+    furniture.refrigerator = !!refrigerator ? refrigerator : false;
+    furniture.conditioner = !!conditioner ? conditioner : false;
+    furniture.gas = !!gas ? gas : false;
+    furniture.bed = !!bed ? bed : false;
+    furniture.desk = !!desk ? desk : false;
+    furniture.chair = !!chair ? chair : false;
+    furniture.sofa = !!sofa ? sofa : false;
+    furniture.laundry = !!laundry ? laundry : false;
+    furniture.heater = !!heater ? heater : false;
+    furniture.cable = !!cable ? cable : false;
+    furniture.internet = !!internet ? internet : false;
+    furniture.wardrobe = !!wardrobe ? wardrobe : false;
+    furniture.tv = !!tv ? tv : false;
+    try {
+      return await furniture.save();
+    } catch (error) {
+      throw new CreateWhenError(error.message);
+    }
   }
 
   /**
@@ -67,14 +89,19 @@ export class RateRepository extends Repository<Rate> {
    * @param {ITransport} transportDto transport data tranfer object
    * @returns {Promise<Transport>}
    */
-  private createTransport(transportDto: ITransport): Transport {
-    return new Transport(
-      transportDto.bus,
-      transportDto.hsr,
-      transportDto.publicBike,
-      transportDto.subway,
-      transportDto.train,
-    );
+  private async createTransport(transportDto: ITransport): Promise<Transport> {
+    const { bus, hsr, publicBike, subway, train } = transportDto;
+    const transport = new Transport();
+    transport.bus = !!bus ? bus : false;
+    transport.hsr = !!hsr ? hsr : false;
+    transport.publicBike = !!publicBike ? publicBike : false;
+    transport.subway = !!subway ? subway : false;
+    transport.train = !!train ? train : false;
+    try {
+      return await transport.save();
+    } catch (error) {
+      throw new CreateWhenError(error.message);
+    }
   }
 
   /**
@@ -83,48 +110,61 @@ export class RateRepository extends Repository<Rate> {
    * @param {IPrice} priceDto price data transfer object
    * @returns {Promise<Price>}
    */
-  private createPrice(priceDto: IPrice): Price {
-    return new Price(
-      priceDto.deposit,
-      priceDto.monthlyPrice,
-      priceDto.managementFee,
-      priceDto.parkingFee,
-    );
+  private async createPrice(priceDto: IPrice): Promise<Price> {
+    const { deposit, monthlyPrice, managementFee, parkingFee } = priceDto;
+    const price = new Price();
+    price.deposit = deposit;
+    price.monthlyPrice = monthlyPrice;
+    price.managementFee = !!managementFee ? managementFee : 0;
+    price.parkingFee = !!parkingFee ? parkingFee : 0;
+    try {
+      return await price.save();
+    } catch (error) {
+      throw new CreateWhenError(error.message);
+    }
   }
 
   /**
    * @description Create Rate Entity Repository Handler
    * @public
-   * @param {IRate} rateDto rate data transfer object
+   * @param {IRateCreate} rateDto rate data transfer object
    * @returns {Promise<Rate | Error>}
    */
-  public async createRate(rateDto: IRate): Promise<Rate> {
+  public async createRate(rateDto: IRateCreate): Promise<Rate> {
+    const {
+      vender,
+      owner,
+      noiseRate,
+      locationRate,
+      houseConiditionRate,
+      houseOwnerRate,
+      transport,
+      furniture,
+      price,
+    } = rateDto;
+    const rate = new Rate();
+    rate.vender = vender;
+    rate.owner = owner;
+    // fine rate
+    rate.noiseRate = noiseRate;
+    rate.locationRate = locationRate;
+    rate.houseConiditionRate = houseConiditionRate;
+    rate.houseOwnerRate = houseOwnerRate;
+    // average rate
+    rate.averageRate = Math.round(
+      (noiseRate + locationRate + houseConiditionRate + houseOwnerRate) / 4,
+    );
+    // counter
+    rate.rateCount = 1;
     try {
-      const {
-        vender,
-        owner,
-        averageRate,
-        noiseRate,
-        locationRate,
-        houseConiditionRate,
-        houseOwnerRate,
-        transport,
-        furniture,
-        price,
-      } = rateDto;
-      const rate = new Rate();
-      rate.vender = vender;
-      rate.owner = owner;
-      rate.averageRate = averageRate;
-      rate.noiseRate = noiseRate;
-      rate.locationRate = locationRate;
-      rate.houseConiditionRate = houseConiditionRate;
-      rate.houseOwnerRate = houseOwnerRate;
-      rate.transport = this.createTransport(transport);
-      rate.furniture = this.createFurniture(furniture);
-      rate.price = this.createPrice(price);
-      return await this.repoManager.save<Rate>(rate);
+      // foregin table
+      rate.furniture = await this.createFurniture(furniture);
+      rate.transport = await this.createTransport(transport);
+      rate.price = await this.createPrice(price);
+      // rate table
+      return await rate.save();
     } catch (error) {
+      Logger.log(error.message, 'Create', true);
       throw new CreateWhenError(error.message);
     }
   }
@@ -136,30 +176,18 @@ export class RateRepository extends Repository<Rate> {
    * @deprecated
    * @public
    * @param {string} id rate primary key
-   * @param {IRate} rateDto rate data transfer object
+   * @param {IRateCreate} rateDto rate data transfer object
    * @returns {Promise<unknown>}
    */
-  async updateRate(id: string, rateDto: IRate): Promise<unknown> {
+  async updateRate(id: string, rateDto: IRateCreate): Promise<Rate> {
     try {
-      return new Promise((resolve, reject) => {
-        this.repoManager
-          .transaction(transactionManager => {
-            return transactionManager
-              .createQueryBuilder(Rate, 'Rate')
-              .setLock('pessimistic_write')
-              .whereInIds(id)
-              .getOne()
-              .then(existedData => {
-                if (!existedData)
-                  throw new ReadWhenError(`DB Record ${id} Not Found`);
-                const updated_data: IRate = merge(existedData, rateDto);
-                return transactionManager
-                  .save(updated_data)
-                  .then(done => resolve(done));
-              });
-          })
-          .catch(err => reject(err));
-      });
+      let rate = await Rate.findOne({ where: { id } });
+      if (!rate) throw new ConflictException(`Rate ${id} not exists`);
+
+      // deep merge
+      rate = merge(rate, rateDto);
+
+      return await rate.save();
     } catch (error) {
       throw new UpdateWhenError(error.message);
     }

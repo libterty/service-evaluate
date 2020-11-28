@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IPage, IRate } from './rate.dto';
+import { IPage, IRate, IRateCreate } from './rate.dto';
 import { Rate } from './rate.entity';
 import { RateRepository } from './rate.repository';
 
@@ -71,10 +71,10 @@ export class RateService {
   /**
    * @description Create Rate Entity Service Handler
    * @public
-   * @param {IRate} rateDto rate data transfer object
+   * @param {IRateCreate} rateDto rate data transfer object
    * @returns {Promise<Rate | Error>}
    */
-  public async createRate(rateDto: IRate): Promise<Rate | Error> {
+  public async createRate(rateDto: IRateCreate): Promise<Rate | Error> {
     try {
       const rate = await this.rateRepository.createRate(rateDto);
 

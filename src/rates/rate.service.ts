@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IPage, IRate } from './rate.dto';
+import { IPage, IRate, IRateCreate } from './rate.dto';
 import { Rate } from './rate.entity';
 import { RateRepository } from './rate.repository';
 
@@ -31,7 +31,7 @@ export class RateService {
             status: HttpStatus.BAD_REQUEST,
             error: 'Skip Must be a Integer',
           },
-          HttpStatus.NOT_FOUND,
+          HttpStatus.BAD_REQUEST,
         );
       if (searchDto.take && !Number.isInteger(searchDto.take))
         return new HttpException(
@@ -39,7 +39,7 @@ export class RateService {
             status: HttpStatus.BAD_REQUEST,
             error: 'Take Must be a Integer',
           },
-          HttpStatus.NOT_FOUND,
+          HttpStatus.BAD_REQUEST,
         );
 
       const { rates, count } = await this.rateRepository.getRates(searchDto);
@@ -69,12 +69,41 @@ export class RateService {
   }
 
   /**
-   * @description Create Rate Entity Service Handler
+   * @description Get Rate By Id
    * @public
-   * @param {IRate} rateDto rate data transfer object
+   * @param {number} id
    * @returns {Promise<Rate | Error>}
    */
-  public async createRate(rateDto: IRate): Promise<Rate | Error> {
+  public async getRateById(id: number): Promise<Rate | Error> {
+    try {
+      const rate = await this.rateRepository.getRateById(id);
+      if (!rate)
+        return new HttpException(
+          {
+            status: HttpStatus.NOT_FOUND,
+            error: `Rate: ${id} Not Found`,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      return rate;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: `Get Rate: ${id} Error`,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * @description Create Rate Entity Service Handler
+   * @public
+   * @param {IRateCreate} rateDto rate data transfer object
+   * @returns {Promise<Rate | Error>}
+   */
+  public async createRate(rateDto: IRateCreate): Promise<Rate | Error> {
     try {
       const rate = await this.rateRepository.createRate(rateDto);
 

@@ -20,6 +20,7 @@ async function bootstrap() {
     new ValidationPipe({
       skipMissingProperties: true,
       validationError: { target: true },
+      transform: true,
     }),
   );
   app.setGlobalPrefix(`${config.PREFIX}${config.API_EXPLORER_PATH}`);

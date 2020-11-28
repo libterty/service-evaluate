@@ -1,15 +1,28 @@
 version: "3"
 services:
-  mongo:
-    image: mongo
-    container_name: service-evaluate-mongo
+  redis:
+    build: ./containers/redis
+    container_name: service-evaluate-redis
+    environment:
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    labels:
+      kompose.service.type: nodeport
     ports:
-      - 27017:27017
-      - 27018:27018
+      - "6379:6379"
   app:
     build: .
     container_name: service-evaluate-app
+    command: sh -c "dockerize -wait tcp://redis:6379 npm run start:prod"
     depends_on:
-      - mongo
+      - redis
+    environment:
+      APPHOST: localhost
+      APPPORT: 7070
+      DBHOST: localhost
+      DBPORT: 5432
+      DBUSERNAME: 'postgres'
+      DBPASSWORD: 123
+      DBDATABASE: lib
+      REDISRATELIMITURL: redis://127.0.0.1:6379
     ports:
       - 7070:7070

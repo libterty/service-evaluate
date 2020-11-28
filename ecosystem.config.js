@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "service-evaluate",
-      script: "dist/src/main",
+      script: "../dist/src/main",
       watch: true,
       error_file: "/logs/service-evaluate.log",
       out_file: "/logs/service-evaluate.log",

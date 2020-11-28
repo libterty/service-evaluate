@@ -1,0 +1,15 @@
+version: "3"
+services:
+  mongo:
+    image: mongo
+    container_name: service-evaluate-mongo
+    ports:
+      - 27017:27017
+      - 27018:27018
+  app:
+    build: .
+    container_name: service-evaluate-app
+    depends_on:
+      - mongo
+    ports:
+      - 7070:7070

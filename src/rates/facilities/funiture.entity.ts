@@ -1,9 +1,9 @@
-import { Entity, Column, ObjectIdColumn, ObjectID } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Furniture {
-  @ObjectIdColumn()
-  id: ObjectID;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   refrigerator?: boolean;

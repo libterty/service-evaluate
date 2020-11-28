@@ -1,12 +1,19 @@
-import { Entity, Column, ObjectID, ObjectIdColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+  BaseEntity,
+} from 'typeorm';
 import { Furniture } from './facilities/funiture.entity';
 import { Transport } from './facilities/transport.entity';
 import { Price } from './facilities/price.entity';
 
 @Entity()
-export class Rate {
-  @ObjectIdColumn()
-  id: ObjectID;
+export class Rate extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   vender: string;
@@ -29,12 +36,18 @@ export class Rate {
   @Column()
   houseOwnerRate: number;
 
-  @Column(() => Furniture)
+  @Column()
+  rateCount: number;
+
+  @OneToOne(() => Furniture, { cascade: true })
+  @JoinColumn()
   furniture: Furniture;
 
-  @Column(() => Transport)
+  @OneToOne(() => Transport, { cascade: true })
+  @JoinColumn()
   transport: Transport;
 
-  @Column(() => Price)
+  @OneToOne(() => Price, { cascade: true })
+  @JoinColumn()
   price: Price;
 }

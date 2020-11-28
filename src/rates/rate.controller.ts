@@ -37,9 +37,7 @@ export class RateController {
   }
 
   @Get('/:id')
-  getRateById(
-    @Param('id', ParseIntPipe) id: number,
-  ): Promise<Rate | Error> {
+  getRateById(@Param('id', ParseIntPipe) id: number): Promise<Rate | Error> {
     return this.rateService.getRateById(id);
   }
 

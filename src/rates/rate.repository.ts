@@ -46,15 +46,15 @@ export class RateRepository extends Repository<Rate> {
    * @returns {Promise<Rate>}
    */
   public async getRateById(id: number): Promise<Rate> {
-    const query = this.createQueryBuilder("rate");
-    query.leftJoinAndSelect("rate.furniture", "furniture");
-    query.leftJoinAndSelect("rate.transport", "transport");
-    query.leftJoinAndSelect("rate.price", "price");
+    const query = this.createQueryBuilder('rate');
+    query.leftJoinAndSelect('rate.furniture', 'furniture');
+    query.leftJoinAndSelect('rate.transport', 'transport');
+    query.leftJoinAndSelect('rate.price', 'price');
     query.andWhere('rate.id = :id', { id });
     try {
       return await query.getOne();
     } catch (error) {
-      Logger.log(error.message, "GetRateById", true);
+      Logger.log(error.message, 'GetRateById', true);
       throw new ReadWhenError(error.message);
     }
   }

@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Param,
   ParseIntPipe,
   Post,
   Query,
@@ -33,6 +34,13 @@ export class RateController {
   ): Promise<{ rates: Rate[]; count: number } | Error> {
     const searchDto = { take, skip };
     return this.rateService.getRates(searchDto);
+  }
+
+  @Get('/:id')
+  getRateById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Rate | Error> {
+    return this.rateService.getRateById(id);
   }
 
   @Post()

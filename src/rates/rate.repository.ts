@@ -21,10 +21,9 @@ export class RateRepository extends Repository<Rate> {
   public async getRates(
     searchDto: IPage,
   ): Promise<{ rates: Rate[]; count: number }> {
+    const take = searchDto.take ? Number(searchDto.take) : 10;
+    const skip = searchDto.skip ? Number(searchDto.skip) : 0;
     try {
-      const take = searchDto.take ? Number(searchDto.take) : 10;
-      const skip = searchDto.skip ? Number(searchDto.skip) : 0;
-
       const [rates, count] = await this.repoManager.findAndCount(Rate, {
         take,
         skip,
@@ -36,6 +35,26 @@ export class RateRepository extends Repository<Rate> {
       };
     } catch (error) {
       Logger.log(error.message, 'GetRates', true);
+      throw new ReadWhenError(error.message);
+    }
+  }
+
+  /**
+   * @description Get Rate By Id
+   * @public
+   * @param {number} id
+   * @returns {Promise<Rate>}
+   */
+  public async getRateById(id: number): Promise<Rate> {
+    const query = this.createQueryBuilder("rate");
+    query.leftJoinAndSelect("rate.furniture", "furniture");
+    query.leftJoinAndSelect("rate.transport", "transport");
+    query.leftJoinAndSelect("rate.price", "price");
+    query.andWhere('rate.id = :id', { id });
+    try {
+      return await query.getOne();
+    } catch (error) {
+      Logger.log(error.message, "GetRateById", true);
       throw new ReadWhenError(error.message);
     }
   }

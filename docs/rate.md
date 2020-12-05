@@ -40,7 +40,7 @@
     vender: string;
     owner: string;
     averageRate: number;
-    noiseRate: number;
+    quiteRate: number;
     locationRate: number;
     houseConiditionRate: number;
     houseOwnerRate: number;
@@ -143,7 +143,7 @@ curl --request GET '/v1.0/api/rates/<rateId>'
     "vender": "591 租屋網",
     "owner": "lib-test3",
     "averageRate": 5,
-    "noiseRate": 1,
+    "quiteRate": 1,
     "locationRate": 8,
     "houseConiditionRate": 9,
     "houseOwnerRate": 3,
@@ -192,7 +192,7 @@ curl --request GET '/v1.0/api/rates/<rateId>'
 
 | Parameter             | Description                                                                                | Type         | In         |
 | --------              | --------                                                                                   | --------     | --------   |
-| noiseRate(Required)   | Noise rate around the house.                                                               | number       | body       |
+| quiteRate(Required)   | Noise rate around the house.                                                               | number       | body       |
 | locationRate(Required)| Location rate around house.                                                                | number       | body       |
 | houseOwnerRate(Required)| House Owner rate.                                                                        | number       | body       |
 | monthlyPrice(Required)| monthlyPrice Amount.                                                                       | number       | body       |
@@ -253,7 +253,7 @@ curl --request POST '/v1.0/api/rates' \
 --data-raw '{
     "vender": "591 租屋網",
     "owner": "lib-test1",
-    "noiseRate": 3,
+    "quiteRate": 3,
     "locationRate": 8,
     "houseConiditionRate": 9,
     "houseOwnerRate": 3,
@@ -277,7 +277,7 @@ curl --request POST '/v1.0/api/rates' \
 | Parameter             | Description                                                                                | Type         | In         |
 | --------              | --------                                                                                   | --------     | --------   |
 | id(Required)          | Primary Key of the Rate Table.                                                             | number       | param       |
-| noiseRate(Optional)   | Noise rate around the house.                                                               | number       | body       |
+| quiteRate(Optional)   | Noise rate around the house.                                                               | number       | body       |
 | locationRate(Optional)| Location rate around house.                                                                | number       | body       |
 | houseOwnerRate(Optional)| House Owner rate.                                                                        | number       | body       |
 | monthlyPrice(Optional)| monthlyPrice Amount.                                                                       | number       | body       |
@@ -338,7 +338,7 @@ curl --request PUT '/v1.0/api/rates/<rateId>' \
 --data-raw '{
     "vender": "591 租屋網",
     "owner": "lib-test1",
-    "noiseRate": 3,
+    "quiteRate": 3,
     "locationRate": 8,
     "houseConiditionRate": 9,
     "houseOwnerRate": 3,

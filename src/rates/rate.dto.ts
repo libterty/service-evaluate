@@ -25,7 +25,7 @@ export class IRate {
   @Min(0)
   @Max(10)
   @IsInt()
-  noiseRate: number;
+  quiteRate: number;
 
   @Min(0)
   @Max(10)
@@ -65,7 +65,7 @@ export class IRateCreate {
   @IsNumber()
   @Min(0)
   @Max(10)
-  noiseRate: number;
+  quiteRate: number;
 
   @IsNumber()
   @Min(0)

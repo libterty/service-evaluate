@@ -159,7 +159,7 @@ export class RateRepository extends Repository<Rate> {
     const {
       vender,
       owner,
-      noiseRate,
+      quiteRate,
       locationRate,
       houseConiditionRate,
       houseOwnerRate,
@@ -171,13 +171,13 @@ export class RateRepository extends Repository<Rate> {
     rate.vender = vender;
     rate.owner = owner;
     // fine rate
-    rate.noiseRate = noiseRate;
+    rate.quiteRate = quiteRate;
     rate.locationRate = locationRate;
     rate.houseConiditionRate = houseConiditionRate;
     rate.houseOwnerRate = houseOwnerRate;
     // average rate
     rate.averageRate = Math.round(
-      (noiseRate + locationRate + houseConiditionRate + houseOwnerRate) / 4,
+      (quiteRate + locationRate + houseConiditionRate + houseOwnerRate) / 4,
     );
     // counter
     rate.rateCount = 1;
@@ -219,7 +219,7 @@ export class RateRepository extends Repository<Rate> {
         vender: newRate.vender,
         owner: newRate.owner,
         averageRate: newRate.averageRate,
-        noiseRate: newRate.noiseRate,
+        quiteRate: newRate.quiteRate,
         locationRate: newRate.locationRate,
         houseConiditionRate: newRate.houseConiditionRate,
         houseOwnerRate: newRate.houseOwnerRate,

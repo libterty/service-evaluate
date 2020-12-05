@@ -25,7 +25,7 @@ export class Rate extends BaseEntity {
   averageRate: number;
 
   @Column()
-  noiseRate: number;
+  quiteRate: number;
 
   @Column()
   locationRate: number;

@@ -1,0 +1,15 @@
+image: docker
+
+variables:
+  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  RELEASE_IMAGE: $IMAGE_TAG:latest
+
+stages:
+  - deploy
+
+deploy-job:
+  stage: deploy
+  script:
+    - docker compose up --build
+  only:
+    - master

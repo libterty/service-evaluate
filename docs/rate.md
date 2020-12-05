@@ -37,17 +37,25 @@
   }
 
   interface IRate {
-    vender: string;
-    owner: string;
-    averageRate: number;
-    quiteRate: number;
-    locationRate: number;
-    houseConiditionRate: number;
-    houseOwnerRate: number;
-    rateCount: number;
-    furniture: IFurniture;
-    transport: ITransport;
-    price: IPrice;
+    Vender: string;
+    Owner: string;
+    AverageRate: number;
+    QuiteRate: number;
+    LocationRate: number;
+    HouseConiditionRate: number;
+    HouseOwnerRate: number;
+    RateCount: number;
+    TopRegion: number;
+    SubRegion: number;
+    Latitude: number;
+    Longitude: number;
+    Furniture: IFurniture;
+    Transport: ITransport;
+    Price: IPrice;
+  }
+
+  interface IRateMedian {
+    rate_median: string; // number string
   }
 ```
 
@@ -135,20 +143,24 @@ curl --request GET '/v1.0/api/rates?takes=<takes>&skip=<skip>'
 curl --request GET '/v1.0/api/rates/<rateId>'
 ```
 
-#### Example Request
+#### Example Reponse
 
 ```bash
 {
     "id": 7,
-    "vender": "591 租屋網",
-    "owner": "lib-test3",
-    "averageRate": 5,
-    "quiteRate": 1,
-    "locationRate": 8,
-    "houseConiditionRate": 9,
-    "houseOwnerRate": 3,
-    "rateCount": 1,
-    "furniture": {
+    "Vender": "591 租屋網",
+    "Owner": "lib-test3",
+    "AverageRate": 5,
+    "QuiteRate": 1,
+    "LocationRate": 8,
+    "HouseConiditionRate": 9,
+    "HouseOwnerRate": 3,
+    "RateCount": 1,
+    "TopRegion": 17,
+    "SubRegion": 1705,
+    "Latitude": 25.037532,
+    "Longitude": 121.621859,
+    "Furniture": {
         "id": 3,
         "refrigerator": false,
         "conditioner": false,
@@ -164,7 +176,7 @@ curl --request GET '/v1.0/api/rates/<rateId>'
         "wardrobe": false,
         "tv": false
     },
-    "transport": {
+    "Transport": {
         "id": 3,
         "bus": false,
         "hsr": false,
@@ -172,7 +184,7 @@ curl --request GET '/v1.0/api/rates/<rateId>'
         "subway": false,
         "train": false
     },
-    "price": {
+    "Price": {
         "id": 3,
         "deposit": 30000,
         "monthlyPrice": 15000,
@@ -180,6 +192,38 @@ curl --request GET '/v1.0/api/rates/<rateId>'
         "parkingFee": 200
     }
 }
+```
+
+-----------
+
+## **Get Rate Median Record:**
+
+- Get the median record for all records. Current query is not specific area of the records due to we only collecting records in a specific area. But perhaps in the future, the support of distinguishing different areas median will be supported
+
+### **Method**
+
+`GET /v1.0/api/rates/medians`
+
+- **Code:** 200 <br />
+  **Content**
+  ```typescript
+  {
+    IRateMedian[]
+  }
+  ```
+
+#### **Error Response**
+
+- **Code:** 400 <br />
+  **Content** `{ statusCode: 400, error: "Bad Request"; message: "Bad Request" | "Error Message"[], }`
+
+- **Code:** 500 <br />
+  **Content** `{ status: "error", error: string, }`
+
+#### Example Request
+
+```bash
+curl --request GET '/v1.0/api/rates/medians'
 ```
 
 -----------
@@ -192,16 +236,19 @@ curl --request GET '/v1.0/api/rates/<rateId>'
 
 | Parameter             | Description                                                                                | Type         | In         |
 | --------              | --------                                                                                   | --------     | --------   |
-| quiteRate(Required)   | Noise rate around the house.                                                               | number       | body       |
-| locationRate(Required)| Location rate around house.                                                                | number       | body       |
-| houseOwnerRate(Required)| House Owner rate.                                                                        | number       | body       |
+| Vender(Required)      | vender name.                                                                               | string       | body       |
+| Owner(Required)       | owner name.                                                                                | string       | body       |
+| QuiteRate(Required)   | Noise rate around the house.                                                               | number       | body       |
+| LocationRate(Required)| Location rate around house.                                                                | number       | body       |
+| TopRegion(Required)   | Region code that represend the meaning of the city in that country.                        | number       | body       |
+| Latitude(Required)    | Latitude that represend the location of the property.                                      | number       | body       |
+| Longitude(Required)   | Longitude that represend the location of the property.                                     | number       | body       |
+| HouseOwnerRate(Required)| House Owner rate.                                                                        | number       | body       |
 | monthlyPrice(Required)| monthlyPrice Amount.                                                                       | number       | body       |
-| vender(Required)      | vender name.                                                                               | string       | body       |
-| owner(Required)       | owner name.                                                                                | string       | body       |
 | deposit(Required)     | deposit Amount.                                                                            | number       | body       |
-| monthlyPrice(Required)| monthlyPrice Amount.                                                                       | number       | body       |
 | managementFee(Required)| managementFee Amount.                                                                     | number       | body       |
 | parkingFee(Required)  | parkingFee Amount.                                                                         | number       | body       |
+| SubRegion(Optional)   | Region code that represend the meaning of the town in that city.                           | number       | body       |
 | bus(Optional)         | Bus Transportation.                                                                        | boolean      | body       |
 | hsr(Optional)         | Hsr Transportation.                                                                        | boolean      | body       |
 | publicBike(Optional)  | publicBike Transportation.                                                                 | boolean      | body       |
@@ -251,15 +298,19 @@ curl --request GET '/v1.0/api/rates/<rateId>'
 curl --request POST '/v1.0/api/rates' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "vender": "591 租屋網",
-    "owner": "lib-test1",
-    "quiteRate": 3,
-    "locationRate": 8,
-    "houseConiditionRate": 9,
-    "houseOwnerRate": 3,
-    "furniture": {},
-    "transport": {},
-    "price": {
+    "Vender": "591 租屋網",
+    "Owner": "lib-test1",
+    "QuiteRate": 3,
+    "LocationRate": 8,
+    "HouseConiditionRate": 9,
+    "HouseOwnerRate": 3,
+    "TopRegion": 17,
+    "SubRegion": 1705,
+    "Latitude": 25.037532,
+    "Longitude": 121.621859,
+    "Furniture": {},
+    "Transport": {},
+    "Price": {
         "deposit": 30000,
         "monthlyPrice": 15000,
         "managementFee": 0,
@@ -272,21 +323,24 @@ curl --request POST '/v1.0/api/rates' \
 
 - Update rate transaction data by Primary Key.
 
-### **Parameter in Create Rate Record**
+### **Parameter in Update Rate Record**
 
 | Parameter             | Description                                                                                | Type         | In         |
 | --------              | --------                                                                                   | --------     | --------   |
 | id(Required)          | Primary Key of the Rate Table.                                                             | number       | param       |
-| quiteRate(Optional)   | Noise rate around the house.                                                               | number       | body       |
-| locationRate(Optional)| Location rate around house.                                                                | number       | body       |
-| houseOwnerRate(Optional)| House Owner rate.                                                                        | number       | body       |
+| Vender(Optional)      | vender name.                                                                               | string       | body       |
+| Owner(Optional)       | owner name.                                                                                | string       | body       |
+| QuiteRate(Optional)   | Noise rate around the house.                                                               | number       | body       |
+| LocationRate(Optional)| Location rate around house.                                                                | number       | body       |
+| TopRegion(Optional)   | Region code that represend the meaning of the city in that country.                        | number       | body       |
+| Latitude(Optional)    | Latitude that represend the location of the property.                                      | number       | body       |
+| Longitude(Optional)   | Longitude that represend the location of the property.                                     | number       | body       |
+| HouseOwnerRate(Optional)| House Owner rate.                                                                        | number       | body       |
 | monthlyPrice(Optional)| monthlyPrice Amount.                                                                       | number       | body       |
-| vender(Optional)      | vender name.                                                                               | string       | body       |
-| owner(Optional)       | owner name.                                                                                | string       | body       |
 | deposit(Optional)     | deposit Amount.                                                                            | number       | body       |
-| monthlyPrice(Optional)| monthlyPrice Amount.                                                                       | number       | body       |
 | managementFee(Optional)| managementFee Amount.                                                                     | number       | body       |
 | parkingFee(Optional)  | parkingFee Amount.                                                                         | number       | body       |
+| SubRegion(Optional)   | Region code that represend the meaning of the town in that city.                           | number       | body       |
 | bus(Optional)         | Bus Transportation.                                                                        | boolean      | body       |
 | hsr(Optional)         | Hsr Transportation.                                                                        | boolean      | body       |
 | publicBike(Optional)  | publicBike Transportation.                                                                 | boolean      | body       |
@@ -342,6 +396,10 @@ curl --request PUT '/v1.0/api/rates/<rateId>' \
     "locationRate": 8,
     "houseConiditionRate": 9,
     "houseOwnerRate": 3,
+    "TopRegion": 17,
+    "SubRegion": 1705,
+    "Latitude": 25.037532,
+    "Longitude": 121.621859,
     "furniture": {},
     "transport": {},
     "price": {

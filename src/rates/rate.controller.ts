@@ -38,6 +38,11 @@ export class RateController {
     return this.rateService.getRates(searchDto);
   }
 
+  @Get('/medians')
+  getRateMedian(): Promise<{ rate_median: number }[] | Error> {
+    return this.rateService.getRateMedian();
+  }
+
   @Get('/:id')
   getRateById(@Param('id', ParseIntPipe) id: number): Promise<Rate | Error> {
     return this.rateService.getRateById(id);

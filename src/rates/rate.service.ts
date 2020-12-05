@@ -1,12 +1,6 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateResult } from 'typeorm';
-import { IPage, IRate, IRateCreate } from './rate.dto';
+import { IPage, IRateCreate } from './rate.dto';
 import { Rate } from './rate.entity';
 import { RateRepository } from './rate.repository';
 
@@ -92,6 +86,25 @@ export class RateService {
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           error: `Get Rate: ${id} Error`,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  /**
+   * @description Get Rate Median Service Handler
+   * @public
+   * @returns {Promise<{ rate_median: number; }[] | Error>}
+   */
+  public async getRateMedian(): Promise<{ rate_median: number }[] | Error> {
+    try {
+      return await this.rateRepository.getRateMedian();
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Get Rates Median Error',
         },
         HttpStatus.INTERNAL_SERVER_ERROR,
       );

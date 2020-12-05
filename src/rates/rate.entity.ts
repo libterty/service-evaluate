@@ -16,54 +16,54 @@ export class Rate extends BaseEntity {
   id: number;
 
   @Column()
-  vender: string;
+  Vender: string;
 
   @Column()
-  owner: string;
+  Owner: string;
 
   @Column()
-  averageRate: number;
+  AverageRate: number;
 
   @Column()
-  quiteRate: number;
+  QuiteRate: number;
 
   @Column()
-  locationRate: number;
+  LocationRate: number;
 
   @Column()
-  houseConiditionRate: number;
+  HouseConiditionRate: number;
 
   @Column()
-  houseOwnerRate: number;
+  HouseOwnerRate: number;
 
   @Column()
-  rateCount: number;
+  RateCount: number;
 
   // 縣市
   @Column()
-  topRegion: number;
+  TopRegion: number;
 
   // 區
   @Column()
-  subRegion: number;
+  SubRegion: number;
 
   // 經度
   @Column({ nullable: false, type: 'float' })
-  latitude: number;
+  Latitude: number;
 
   // 緯度
   @Column({ nullable: false, type: 'float' })
-  longitude: number;
+  Longitude: number;
 
   @OneToOne(() => Furniture, { cascade: true })
   @JoinColumn()
-  furniture: Furniture;
+  Furniture: Furniture;
 
   @OneToOne(() => Transport, { cascade: true })
   @JoinColumn()
-  transport: Transport;
+  Transport: Transport;
 
   @OneToOne(() => Price, { cascade: true })
   @JoinColumn()
-  price: Price;
+  Price: Price;
 }

@@ -1,13 +1,4 @@
-import { Type } from 'class-transformer';
-import {
-  IsInt,
-  IsNumber,
-  IsNumberString,
-  IsObject,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsInt, IsNumber, IsObject, IsString, Max, Min } from 'class-validator';
 import { IFurniture, ITransport, IPrice } from './facilities/facility.dto';
 
 export class IRate {
@@ -25,7 +16,7 @@ export class IRate {
   @Min(0)
   @Max(10)
   @IsInt()
-  noiseRate: number;
+  quiteRate: number;
 
   @Min(0)
   @Max(10)
@@ -57,39 +48,50 @@ export class IRate {
 
 export class IRateCreate {
   @IsString()
-  vender: string;
+  Vender: string;
 
   @IsString()
-  owner: string;
+  Owner: string;
 
   @IsNumber()
   @Min(0)
   @Max(10)
-  noiseRate: number;
+  QuiteRate: number;
 
   @IsNumber()
   @Min(0)
   @Max(10)
-  locationRate: number;
+  LocationRate: number;
 
   @IsNumber()
   @Min(0)
   @Max(10)
-  houseConiditionRate: number;
+  HouseConiditionRate: number;
 
   @IsNumber()
   @Min(0)
   @Max(10)
-  houseOwnerRate: number;
+  HouseOwnerRate: number;
+
+  @IsNumber()
+  TopRegion: number;
+
+  SubRegion?: number;
+
+  @IsNumber()
+  Latitude: number;
+
+  @IsNumber()
+  Longitude: number;
 
   @IsObject()
-  furniture: IFurniture;
+  Furniture: IFurniture;
 
   @IsObject()
-  transport: ITransport;
+  Transport: ITransport;
 
   @IsObject()
-  price: IPrice;
+  Price: IPrice;
 }
 
 export interface IPage {

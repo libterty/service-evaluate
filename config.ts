@@ -80,6 +80,8 @@ const configs = {
       username: process.env.DBUSERNAME || 'postgres',
       password: process.env.DBPASSWORD || '123',
       database: process.env.DBDATABASE || 'lib',
+      schema: process.env.DBSCHEMA || 'public',
+      rateTable: process.env.DBRATETABLE || 'rate',
     },
     REDIS_URL: process.env.REDISRATELIMITURL || "redis://127.0.0.1:6379",
   },

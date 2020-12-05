@@ -1,23 +1,18 @@
 import { CreateWhenError, ReadWhenError, UpdateWhenError } from 'libs/error';
-import {
-  Repository,
-  EntityRepository,
-  getMongoManager,
-  UpdateResult,
-} from 'typeorm';
-import { merge } from 'lodash';
+import { Repository, EntityRepository, getManager } from 'typeorm';
 import { IFurniture, IPrice, ITransport } from './facilities/facility.dto';
 import { Furniture } from './facilities/funiture.entity';
 import { Price } from './facilities/price.entity';
 import { Transport } from './facilities/transport.entity';
-import { IPage, IRate, IRateCreate } from './rate.dto';
+import { IPage, IRateCreate } from './rate.dto';
 import { Rate } from './rate.entity';
 import { ConflictException, Logger } from '@nestjs/common';
 import { isEmptyObj } from '../libs/utils';
+import { config } from '../../config';
 
 @EntityRepository(Rate)
 export class RateRepository extends Repository<Rate> {
-  public readonly repoManager = getMongoManager();
+  public readonly repoManager = getManager();
   /**
    * @description Get Rate With Pagination
    * @public
@@ -33,7 +28,7 @@ export class RateRepository extends Repository<Rate> {
       const [rates, count] = await this.repoManager.findAndCount(Rate, {
         take,
         skip,
-        relations: ['furniture', 'price', 'transport'],
+        relations: ['Furniture', 'Price', 'Transport'],
       });
       return {
         rates,
@@ -63,6 +58,27 @@ export class RateRepository extends Repository<Rate> {
       Logger.log(error.message, 'GetRateById', true);
       throw new ReadWhenError(error.message);
     }
+  }
+
+  /**
+   * @description Get Rate Median by AverageRate Column by using `PERCENTILE_CONT`. `PERCENTILE_CONT` use linear interpolation to find result in a continuous distribution
+   * @public
+   * @returns {Promise<{ rate_median: number }[]>}
+   */
+  public async getRateMedian(): Promise<{ rate_median: number }[]> {
+    return new Promise((resolve, reject) => {
+      this.repoManager
+        .query(
+          `
+          SELECT  
+            ROUND(PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY "AverageRate")::numeric, 2) AS rate_median
+          FROM ${config.DB_SETTINGS.schema}.${config.DB_SETTINGS.rateTable}
+          WHERE "AverageRate" <> 0; 
+        `,
+        )
+        .then(res => resolve(res))
+        .catch(err => reject(err.message));
+    });
   }
 
   /**
@@ -157,35 +173,44 @@ export class RateRepository extends Repository<Rate> {
    */
   public async createRate(rateDto: IRateCreate): Promise<Rate> {
     const {
-      vender,
-      owner,
-      noiseRate,
-      locationRate,
-      houseConiditionRate,
-      houseOwnerRate,
-      transport,
-      furniture,
-      price,
+      Vender,
+      Owner,
+      QuiteRate,
+      LocationRate,
+      HouseConiditionRate,
+      HouseOwnerRate,
+      TopRegion,
+      SubRegion,
+      Latitude,
+      Longitude,
+      Transport,
+      Furniture,
+      Price,
     } = rateDto;
     const rate = new Rate();
-    rate.vender = vender;
-    rate.owner = owner;
+    rate.Vender = Vender;
+    rate.Owner = Owner;
     // fine rate
-    rate.noiseRate = noiseRate;
-    rate.locationRate = locationRate;
-    rate.houseConiditionRate = houseConiditionRate;
-    rate.houseOwnerRate = houseOwnerRate;
+    rate.QuiteRate = QuiteRate;
+    rate.LocationRate = LocationRate;
+    rate.HouseConiditionRate = HouseConiditionRate;
+    rate.HouseOwnerRate = HouseOwnerRate;
+    // location data
+    rate.TopRegion = TopRegion;
+    rate.SubRegion = SubRegion ? SubRegion : 0;
+    rate.Latitude = Latitude;
+    rate.Longitude = Longitude;
     // average rate
-    rate.averageRate = Math.round(
-      (noiseRate + locationRate + houseConiditionRate + houseOwnerRate) / 4,
+    rate.AverageRate = Math.round(
+      (QuiteRate + LocationRate + HouseConiditionRate + HouseOwnerRate) / 4,
     );
     // counter
-    rate.rateCount = 1;
+    rate.RateCount = 1;
     try {
       // foregin table
-      rate.furniture = await this.createFurniture(furniture);
-      rate.transport = await this.createTransport(transport);
-      rate.price = await this.createPrice(price);
+      rate.Furniture = await this.createFurniture(Furniture);
+      rate.Transport = await this.createTransport(Transport);
+      rate.Price = await this.createPrice(Price);
       // rate table
       return await rate.save();
     } catch (error) {
@@ -216,54 +241,58 @@ export class RateRepository extends Repository<Rate> {
 
       const newRate = Object.assign(rate, rateDto);
       const updateRate = {
-        vender: newRate.vender,
-        owner: newRate.owner,
-        averageRate: newRate.averageRate,
-        noiseRate: newRate.noiseRate,
-        locationRate: newRate.locationRate,
-        houseConiditionRate: newRate.houseConiditionRate,
-        houseOwnerRate: newRate.houseOwnerRate,
-        rateCount: newRate.rateCount,
+        Vender: newRate.Vender,
+        Owner: newRate.Owner,
+        AverageRate: newRate.AverageRate,
+        QuiteRate: newRate.QuiteRate,
+        LocationRate: newRate.LocationRate,
+        HouseConiditionRate: newRate.HouseConiditionRate,
+        HouseOwnerRate: newRate.HouseOwnerRate,
+        RateCount: newRate.RateCount,
+        TopRegion: newRate.TopRegion,
+        SubRegion: newRate.SubRegion,
+        Latitude: newRate.Latitude,
+        Longitude: newRate.Longitude,
       };
 
-      if (!isEmptyObj(rateDto.transport) && rate.transport.id) {
+      if (!isEmptyObj(rateDto.Transport) && rate.Transport.id) {
         await this.createQueryBuilder()
           .update(Transport)
           .set(
             Object.assign(
-              rate.transport ? rate.transport : {},
-              rateDto.transport,
+              rate.Transport ? rate.Transport : {},
+              rateDto.Transport,
             ),
           )
-          .andWhere('id = :id', { id: rate.transport.id })
+          .andWhere('id = :id', { id: rate.Transport.id })
           .execute();
-      } else if (!isEmptyObj(rateDto.transport) && !rate.transport.id) {
-        updateRate['transport'] = await this.createTransport(rateDto.transport);
+      } else if (!isEmptyObj(rateDto.Transport) && !rate.Transport.id) {
+        updateRate['Transport'] = await this.createTransport(rateDto.Transport);
       }
 
-      if (!isEmptyObj(rateDto.price) && rate.price.id) {
+      if (!isEmptyObj(rateDto.Price) && rate.Price.id) {
         await this.createQueryBuilder()
           .update(Price)
-          .set(Object.assign(rate.price ? rate.price : {}, rateDto.price))
-          .andWhere('id = :id', { id: rate.price.id })
+          .set(Object.assign(rate.Price ? rate.Price : {}, rateDto.Price))
+          .andWhere('id = :id', { id: rate.Price.id })
           .execute();
-      } else if (!isEmptyObj(rateDto.price) && !rate.price.id) {
-        updateRate['price'] = await this.createPrice(rateDto.price);
+      } else if (!isEmptyObj(rateDto.Price) && !rate.Price.id) {
+        updateRate['Price'] = await this.createPrice(rateDto.Price);
       }
 
-      if (!isEmptyObj(rateDto.furniture) && rate.furniture.id) {
+      if (!isEmptyObj(rateDto.Furniture) && rate.Furniture.id) {
         await this.createQueryBuilder()
           .update(Furniture)
           .set(
             Object.assign(
-              rate.furniture ? rate.furniture : {},
-              rateDto.furniture,
+              rate.Furniture ? rate.Furniture : {},
+              rateDto.Furniture,
             ),
           )
-          .andWhere('id = :id', { id: rate.furniture.id })
+          .andWhere('id = :id', { id: rate.Furniture.id })
           .execute();
-      } else if (!isEmptyObj(rateDto.furniture) && !rate.furniture.id) {
-        updateRate['furniture'] = await this.createFurniture(rateDto.furniture);
+      } else if (!isEmptyObj(rateDto.Furniture) && !rate.Furniture.id) {
+        updateRate['Furniture'] = await this.createFurniture(rateDto.Furniture);
       }
 
       await this.createQueryBuilder()

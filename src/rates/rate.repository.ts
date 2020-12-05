@@ -69,7 +69,7 @@ export class RateRepository extends Repository<Rate> {
    * @param {number} targetLongitude
    * @returns {Promise<{ rate_median: number }[]>}
    */
-  public async getRateMedian(
+  public getRateMedian(
     targetSubRegion: number,
     targetCirculeRadius: number,
     targetLatitude: number,

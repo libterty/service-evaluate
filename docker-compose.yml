@@ -16,13 +16,15 @@ services:
     depends_on:
       - redis
     environment:
-      APPHOST: localhost
-      APPPORT: 7070
-      DBHOST: localhost
-      DBPORT: 5432
-      DBUSERNAME: 'postgres'
-      DBPASSWORD: 123
-      DBDATABASE: lib
+      APPHOST: ${APPHOST}
+      APPPORT: ${APPPORT}
+      DBHOST: ${DBHOST}
+      DBPORT: ${DBPORT}
+      DBUSERNAME: ${DBUSERNAME}
+      DBPASSWORD: ${DBPASSWORD}
+      DBDATABASE: ${DBDATABASE}
+      DBSCHEMA: ${DBSCHEMA}
+      DBRATETABLE: ${DBRATETABLE}
       REDISRATELIMITURL: redis://127.0.0.1:6379
     ports:
       - 7070:7070

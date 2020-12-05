@@ -48,50 +48,50 @@ export class IRate {
 
 export class IRateCreate {
   @IsString()
-  vender: string;
+  Vender: string;
 
   @IsString()
-  owner: string;
+  Owner: string;
 
   @IsNumber()
   @Min(0)
   @Max(10)
-  quiteRate: number;
+  QuiteRate: number;
 
   @IsNumber()
   @Min(0)
   @Max(10)
-  locationRate: number;
+  LocationRate: number;
 
   @IsNumber()
   @Min(0)
   @Max(10)
-  houseConiditionRate: number;
+  HouseConiditionRate: number;
 
   @IsNumber()
   @Min(0)
   @Max(10)
-  houseOwnerRate: number;
+  HouseOwnerRate: number;
 
   @IsNumber()
-  topRegion: number;
+  TopRegion: number;
 
-  subRegion?: number;
-
-  @IsNumber()
-  latitude: number;
+  SubRegion?: number;
 
   @IsNumber()
-  longitude: number;
+  Latitude: number;
+
+  @IsNumber()
+  Longitude: number;
 
   @IsObject()
-  furniture: IFurniture;
+  Furniture: IFurniture;
 
   @IsObject()
-  transport: ITransport;
+  Transport: ITransport;
 
   @IsObject()
-  price: IPrice;
+  Price: IPrice;
 }
 
 export interface IPage {

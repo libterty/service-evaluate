@@ -63,18 +63,34 @@ export class RateRepository extends Repository<Rate> {
   /**
    * @description Get Rate Median by AverageRate Column by using `PERCENTILE_CONT`. `PERCENTILE_CONT` use linear interpolation to find result in a continuous distribution
    * @public
+   * @param {number} targetSubRegion
+   * @param {number} targetCirculeRadius
+   * @param {number} targetLatitude
+   * @param {number} targetLongitude
    * @returns {Promise<{ rate_median: number }[]>}
    */
-  public async getRateMedian(): Promise<{ rate_median: number }[]> {
+  public async getRateMedian(
+    targetSubRegion: number,
+    targetCirculeRadius: number,
+    targetLatitude: number,
+    targetLongitude: number,
+  ): Promise<{ rate_median: number }[]> {
     return new Promise((resolve, reject) => {
       this.repoManager
         .query(
           `
-          SELECT  
-            ROUND(PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY "AverageRate")::numeric, 2) AS rate_median
-          FROM ${config.DB_SETTINGS.schema}.${config.DB_SETTINGS.rateTable}
-          WHERE "AverageRate" <> 0; 
-        `,
+            WITH regionResult as (
+              SELECT "AverageRate",
+                "Latitude",
+                "Longitude",
+                "SubRegion"
+              FROM ${config.DB_SETTINGS.schema}.${config.DB_SETTINGS.rateTable}
+              WHERE "SubRegion" = ${targetSubRegion} AND SQRT(POWER(ABS("Latitude" - ${targetLatitude}), ABS("Longitude" - ${targetLongitude}))) < ${targetCirculeRadius}
+            )
+            select 
+              ROUND(PERCENTILE_CONT(0.50) WITHIN GROUP (ORDER BY "AverageRate")::numeric, 2) AS rate_median
+            from regionResult
+          `,
         )
         .then(res => resolve(res))
         .catch(err => reject(err.message));

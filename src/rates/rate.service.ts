@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IPage, IRateCreate } from './rate.dto';
+import { IPage, IRateCreate, IRateMedian } from './rate.dto';
 import { Rate } from './rate.entity';
 import { RateRepository } from './rate.repository';
 
@@ -95,11 +95,38 @@ export class RateService {
   /**
    * @description Get Rate Median Service Handler
    * @public
+   * @param {IRateMedian} rateMedian
    * @returns {Promise<{ rate_median: number; }[] | Error>}
    */
-  public async getRateMedian(): Promise<{ rate_median: number }[] | Error> {
+  public async getRateMedian(
+    rateMedian: IRateMedian,
+  ): Promise<{ rate_median: number }[] | Error> {
     try {
-      return await this.rateRepository.getRateMedian();
+      const {
+        targetSubRegion,
+        targetCirculeRadius,
+        targetLatitude,
+        targetLongitude,
+      } = rateMedian;
+      if (
+        typeof targetSubRegion !== 'number' ||
+        typeof targetCirculeRadius !== 'number' ||
+        typeof targetLatitude !== 'number' ||
+        typeof targetLongitude !== 'number'
+      )
+        return new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Rate Median parameter must be integer or float',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      return await this.rateRepository.getRateMedian(
+        targetSubRegion,
+        targetCirculeRadius,
+        targetLatitude,
+        targetLongitude,
+      );
     } catch (error) {
       throw new HttpException(
         {

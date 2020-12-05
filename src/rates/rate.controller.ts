@@ -11,7 +11,6 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { UpdateResult } from 'typeorm';
 import { IRateCreate } from './rate.dto';
 import { Rate } from './rate.entity';
 import { RateService } from './rate.service';
@@ -39,8 +38,23 @@ export class RateController {
   }
 
   @Get('/medians')
-  getRateMedian(): Promise<{ rate_median: number }[] | Error> {
-    return this.rateService.getRateMedian();
+  getRateMedian(
+    @Query('targetSubRegion')
+    targetSubRegion: number,
+    @Query('targetCirculeRadius')
+    targetCirculeRadius: number,
+    @Query('targetLatitude')
+    targetLatitude: number,
+    @Query('targetLongitude')
+    targetLongitude: number,
+  ): Promise<{ rate_median: number }[] | Error> {
+    const rateMedian = {
+      targetSubRegion,
+      targetCirculeRadius,
+      targetLatitude,
+      targetLongitude,
+    };
+    return this.rateService.getRateMedian(rateMedian);
   }
 
   @Get('/:id')

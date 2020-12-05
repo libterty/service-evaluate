@@ -1,13 +1,4 @@
-import { Type } from 'class-transformer';
-import {
-  IsInt,
-  IsNumber,
-  IsNumberString,
-  IsObject,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsInt, IsNumber, IsObject, IsString, Max, Min } from 'class-validator';
 import { IFurniture, ITransport, IPrice } from './facilities/facility.dto';
 
 export class IRate {
@@ -81,6 +72,17 @@ export class IRateCreate {
   @Min(0)
   @Max(10)
   houseOwnerRate: number;
+
+  @IsNumber()
+  topRegion: number;
+
+  subRegion?: number;
+
+  @IsNumber()
+  latitude: number;
+
+  @IsNumber()
+  longitude: number;
 
   @IsObject()
   furniture: IFurniture;

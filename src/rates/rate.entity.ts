@@ -39,6 +39,22 @@ export class Rate extends BaseEntity {
   @Column()
   rateCount: number;
 
+  // 縣市
+  @Column()
+  topRegion: number;
+
+  // 區
+  @Column()
+  subRegion: number;
+
+  // 經度
+  @Column({ nullable: false, type: 'float' })
+  latitude: number;
+
+  // 緯度
+  @Column({ nullable: false, type: 'float' })
+  longitude: number;
+
   @OneToOne(() => Furniture, { cascade: true })
   @JoinColumn()
   furniture: Furniture;

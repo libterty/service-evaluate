@@ -1,16 +1,10 @@
 import { CreateWhenError, ReadWhenError, UpdateWhenError } from 'libs/error';
-import {
-  Repository,
-  EntityRepository,
-  getMongoManager,
-  UpdateResult,
-} from 'typeorm';
-import { merge } from 'lodash';
+import { Repository, EntityRepository, getMongoManager } from 'typeorm';
 import { IFurniture, IPrice, ITransport } from './facilities/facility.dto';
 import { Furniture } from './facilities/funiture.entity';
 import { Price } from './facilities/price.entity';
 import { Transport } from './facilities/transport.entity';
-import { IPage, IRate, IRateCreate } from './rate.dto';
+import { IPage, IRateCreate } from './rate.dto';
 import { Rate } from './rate.entity';
 import { ConflictException, Logger } from '@nestjs/common';
 import { isEmptyObj } from '../libs/utils';
@@ -64,6 +58,8 @@ export class RateRepository extends Repository<Rate> {
       throw new ReadWhenError(error.message);
     }
   }
+
+  // public async getRateMedian(): {}
 
   /**
    * @description Create Furniture Entity Repository Handler
@@ -163,6 +159,10 @@ export class RateRepository extends Repository<Rate> {
       locationRate,
       houseConiditionRate,
       houseOwnerRate,
+      topRegion,
+      subRegion,
+      latitude,
+      longitude,
       transport,
       furniture,
       price,
@@ -175,6 +175,11 @@ export class RateRepository extends Repository<Rate> {
     rate.locationRate = locationRate;
     rate.houseConiditionRate = houseConiditionRate;
     rate.houseOwnerRate = houseOwnerRate;
+    // location data
+    rate.topRegion = topRegion;
+    rate.subRegion = subRegion ? subRegion : 0;
+    rate.latitude = latitude;
+    rate.longitude = longitude;
     // average rate
     rate.averageRate = Math.round(
       (quiteRate + locationRate + houseConiditionRate + houseOwnerRate) / 4,
@@ -224,6 +229,10 @@ export class RateRepository extends Repository<Rate> {
         houseConiditionRate: newRate.houseConiditionRate,
         houseOwnerRate: newRate.houseOwnerRate,
         rateCount: newRate.rateCount,
+        topRegion: newRate.topRegion,
+        subRegion: newRate.subRegion,
+        latitude: newRate.latitude,
+        longitude: newRate.longitude,
       };
 
       if (!isEmptyObj(rateDto.transport) && rate.transport.id) {

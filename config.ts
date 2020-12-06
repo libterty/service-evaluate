@@ -57,7 +57,7 @@ const configs = {
     API_EXPLORER_PATH: process.env.APPAPIEXPLORERPATH || '/api',
     // Server Setting
     HOST: process.env.APPHOST || 'localhost',
-    PORT: process.env.APPPORT || 7070,
+    PORT: process.env.APPPORT || 8080,
 
     EVENT_STORE_SETTINGS: {
       protocol: process.env.EVENTSTOREPROTOCOL || 'http',

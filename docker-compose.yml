@@ -4,27 +4,43 @@ services:
     build: ./containers/redis
     container_name: service-evaluate-redis
     environment:
+      - ALLOW_EMPTY_PASSWORD=yes
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
     labels:
       kompose.service.type: nodeport
     ports:
       - "6379:6379"
+  database:
+    image: postgres:latest
+    container_name: service-evaluate-rate-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: lib
+    ports:
+      - 5432:5432
   app:
     build: .
     container_name: service-evaluate-app
-    command: sh -c "dockerize -wait tcp://redis:6379 npm run start:prod"
+    command: sh -c "dockerize -wait tcp://redis:6379 -wait tcp://database:5432 npm run start:prod"
     depends_on:
       - redis
+      - database
     environment:
-      APPHOST: ${APPHOST}
-      APPPORT: ${APPPORT}
-      DBHOST: ${DBHOST}
-      DBPORT: ${DBPORT}
-      DBUSERNAME: ${DBUSERNAME}
-      DBPASSWORD: ${DBPASSWORD}
-      DBDATABASE: ${DBDATABASE}
-      DBSCHEMA: ${DBSCHEMA}
-      DBRATETABLE: ${DBRATETABLE}
-      REDISRATELIMITURL: redis://127.0.0.1:6379
+      APPHOST: localhost
+      APPPORT: 8080
+      DBHOST: database
+      DBPORT: 5432
+      DBUSERNAME: postgres
+      DBPASSWORD: 123
+      DBDATABASE: lib
+      DBSCHEMA: public
+      DBRATETABLE: rate
+      REDISRATELIMITURL: redis://redis:6379
     ports:
-      - 7070:7070
+      - 8080:8080
+
+volumes:
+  redis_data:
+    driver: local

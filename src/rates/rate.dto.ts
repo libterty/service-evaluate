@@ -102,3 +102,10 @@ export interface IPage {
 export interface IRateSearch extends IPage {
   keyword: string;
 }
+
+export interface IRateMedian {
+  targetSubRegion: number;
+  targetCirculeRadius: number;
+  targetLatitude: number;
+  targetLongitude: number;
+}

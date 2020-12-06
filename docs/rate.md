@@ -57,6 +57,13 @@
   interface IRateMedian {
     rate_median: string; // number string
   }
+
+  interface IRateMedian {
+    targetSubRegion: number; // can be integer or float
+    targetCirculeRadius: number; // can be integer or float
+    targetLatitude: number; // can be integer or float
+    targetLongitude: number; // can be integer or float
+  }
 ```
 
 ## **Search All Rate Records:**
@@ -107,6 +114,8 @@ curl --request GET '/v1.0/api/rates?takes=<takes>&skip=<skip>'
 ## **Get Rate Record By Id:**
 
 - Record rate transaction data by Primary Key.
+
+### **Parameter in Get Rate Record:**
 
 | Parameter             | Description                                                                                | Type         | In         |
 | --------              | --------                                                                                   | --------     | --------   |
@@ -198,7 +207,17 @@ curl --request GET '/v1.0/api/rates/<rateId>'
 
 ## **Get Rate Median Record:**
 
-- Get the median record for all records. Current query is not specific area of the records due to we only collecting records in a specific area. But perhaps in the future, the support of distinguishing different areas median will be supported
+- Get the median record for all records. Current query is calculating base on sub region provided by user first. Than calculating euclidean distance which inside the circule radis user provided.
+Finally median is generating base on that previous statement reuslt.
+
+### **Parameter in Get Rate Median:**
+
+| Parameter                     | Description                                                                                                                       | Type         | In         |
+| --------                      | --------                                                                                                                          | --------     | --------   |
+| targetSubRegion(Required)     | target sub region which represent the town of the city                                                                            | number       | Query      |
+| targetCirculeRadius(Required) | target circule radius which will take all properties with in the target range to calculate median                                 | number       | Query      |
+| targetLatitude(Required)      | target sub latitude which represent the latitude of the property                                                                  | number       | Query      |
+| targetLongitude(Required)     | target sub longitude which represent the longitude of the property                                                                | number       | Query      |
 
 ### **Method**
 

@@ -4,7 +4,6 @@ services:
     build: ./containers/redis
     container_name: service-evaluate-redis
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
       - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
     labels:
       kompose.service.type: nodeport
@@ -20,6 +19,8 @@ services:
       POSTGRES_DB: lib
     ports:
       - 5432:5432
+    volumes:
+      - sql_data:/var/lib/postgresql/data
   app:
     build: .
     container_name: service-evaluate-app
@@ -42,5 +43,5 @@ services:
       - 8080:8080
 
 volumes:
-  redis_data:
+  sql_data:
     driver: local

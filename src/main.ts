@@ -32,9 +32,9 @@ async function bootstrap() {
 
   SwaggerModule.setup(config.API_EXPLORER_PATH, app, doc);
 
-  await app.listen(config.PORT, config.HOST);
+  await app.listen(config.PORT);
   Logger.log(
-    `Server start on ${config.HOST}/${config.PORT}`,
+    `Server start on ${config.HOST}:${config.PORT}`,
     'Bootstrap',
     true,
   );

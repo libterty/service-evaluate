@@ -39,6 +39,8 @@ services:
       DBSCHEMA: public
       DBRATETABLE: rate
       REDISRATELIMITURL: redis://redis:6379
+      GEOKEY: ${GEOKEY}
+      GEOSECRET: ${GEOSECRET}
     ports:
       - 8080:8080
 

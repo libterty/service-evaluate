@@ -42,4 +42,10 @@ loadtests/
 # data
 tw-rental-data/
 ex.json
-data/
+/data
+
+# python compile
+*/*/__pycache__/
+*/*/*/__pycache__/
+*/*/*.pyc
+*/*/*/*.pyc

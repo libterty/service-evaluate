@@ -57,6 +57,11 @@ export class RateController {
     return this.rateService.getRateMedian(rateMedian);
   }
 
+  @Get('/addresses')
+  getAddressData() {
+    return this.rateService.getAddressData();
+  }
+
   @Get('/:id')
   getRateById(@Param('id', ParseIntPipe) id: number): Promise<Rate | Error> {
     return this.rateService.getRateById(id);

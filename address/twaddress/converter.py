@@ -55,9 +55,3 @@ def mms_cut(s):
     address = parse(s)
 
     return code, city, road, village, address
-
-def main():
-    print(sys.argv[1])
-
-if __name__ == '__main__':
-    main()

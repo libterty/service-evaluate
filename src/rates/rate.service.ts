@@ -4,6 +4,7 @@ import { IPage, IRateCreate, IRateMedian } from './rate.dto';
 import { Rate } from './rate.entity';
 import { RateRepository } from './rate.repository';
 import * as address from '../libs/address';
+import { add } from 'lodash';
 
 @Injectable()
 export class RateService {
@@ -139,9 +140,16 @@ export class RateService {
     }
   }
 
-  public async getAddressData() {
+  public async getAddressData(addr: string) {
     try {
-      return await address.addressConverter('高雄市前鎮區成功二路25號5樓之1');
+      const originalAddress: string = decodeURI(addr);
+      const resultAddress: string = await address.addressConverter(
+        decodeURI(addr),
+      );
+      return {
+        originalAddress,
+        resultAddress: resultAddress[0],
+      };
     } catch (error) {
       throw new HttpException(
         {

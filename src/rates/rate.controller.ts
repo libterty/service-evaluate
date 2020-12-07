@@ -58,8 +58,11 @@ export class RateController {
   }
 
   @Get('/addresses')
-  getAddressData() {
-    return this.rateService.getAddressData();
+  getAddressData(
+    @Query('address')
+    address: string,
+  ) {
+    return this.rateService.getAddressData(address);
   }
 
   @Get('/:id')

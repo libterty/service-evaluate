@@ -49,3 +49,7 @@ ex.json
 */*/*/__pycache__/
 */*/*.pyc
 */*/*/*.pyc
+
+# env
+*.env
+*.dev.env

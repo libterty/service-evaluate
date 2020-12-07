@@ -30,9 +30,10 @@
   ],
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "build": "nest build && npm run build:py",
     "build:docker": "docker build -t libterty8186/service-evaluate .",
     "build:test": "docker build -t service-evaluate-build-test .",
+    "build:py": "cp -r ./address ./dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

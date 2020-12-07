@@ -143,11 +143,13 @@ export class RateService {
   public async getAddressData(addr: string) {
     try {
       const originalAddress: string = decodeURI(addr);
-      const resultAddress: string = await address.addressConverter(decodeURI(addr));
+      const resultAddress: string = await address.addressConverter(
+        decodeURI(addr),
+      );
       return {
         originalAddress,
-        resultAddress: resultAddress[0]
-      }
+        resultAddress: resultAddress[0],
+      };
     } catch (error) {
       throw new HttpException(
         {

@@ -1,4 +1,4 @@
-import * as httpRequest from 'request-promise-core';
+import * as httpRequest from 'request-promise';
 
 export class StandardRequest {
   /**
@@ -7,7 +7,8 @@ export class StandardRequest {
    */
   makeRequest(options: any) {
     return new Promise((resolve, reject) => {
-      httpRequest(options)
+      httpRequest
+        .default(options)
         .then(res => resolve(res))
         .catch(err => reject(err));
     });

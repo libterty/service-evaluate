@@ -83,7 +83,13 @@ const configs = {
       schema: process.env.DBSCHEMA || 'public',
       rateTable: process.env.DBRATETABLE || 'rate',
     },
+
     REDIS_URL: process.env.REDISRATELIMITURL || "redis://127.0.0.1:6379",
+
+    GEO_CONFIGS: {
+      key: process.env.GEOKEY,
+      secret: process.env.GEOSECRET
+    }
   },
   development: {},
   production: {

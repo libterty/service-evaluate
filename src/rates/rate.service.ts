@@ -1,10 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IPage, IRateCreate, IRateMedian } from './rate.dto';
 import { Rate } from './rate.entity';
 import { RateRepository } from './rate.repository';
 import * as address from '../libs/address';
-import { add } from 'lodash';
+import { APIRequestFactory } from '../libs/request-factory';
+import { config } from '../../config';
 
 @Injectable()
 export class RateService {
@@ -140,17 +141,29 @@ export class RateService {
     }
   }
 
+  // temp func not yet decide interface
   public async getAddressData(addr: string) {
     try {
       const originalAddress: string = decodeURI(addr);
       const resultAddress: string = await address.addressConverter(
         decodeURI(addr),
       );
+
+      const geoResult = await APIRequestFactory.createRequest(
+        'standard',
+      ).makeRequest({
+        method: 'GET',
+        uri: `http://www.mapquestapi.com/geocoding/v1/address?key=${config.GEO_CONFIGS.key}&location=${resultAddress[0]}`,
+        json: true,
+      });
+
       return {
         originalAddress,
         resultAddress: resultAddress[0],
+        geoResult,
       };
     } catch (error) {
+      Logger.log(error.message, 'GEO', true);
       throw new HttpException(
         {
           status: HttpStatus.INTERNAL_SERVER_ERROR,

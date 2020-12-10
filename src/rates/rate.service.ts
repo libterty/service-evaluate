@@ -144,16 +144,31 @@ export class RateService {
   // temp func not yet decide interface
   public async getAddressData(addr: string) {
     try {
-      const originalAddress: string = decodeURI(addr);
-      const resultAddress: string = await address.addressConverter(
-        decodeURI(addr),
+      const originalAddress: string = addr;
+      const resultAddress: string[] = await address.addressConverter(
+        addr,
       );
+      console.log("resultAddress", resultAddress)
+
+      if (typeof resultAddress !== 'object') return {
+        originalAddress,
+        resultAddress: resultAddress[0],
+        geoResult: [],
+      };
+
+      if (resultAddress.length === 0) return {
+        originalAddress,
+        resultAddress: resultAddress[0],
+        geoResult: [],
+      };
+
+      const uri = encodeURI(`http://www.mapquestapi.com/geocoding/v1/address?key=${config.GEO_CONFIGS.key}&location=${resultAddress[0]}`)
 
       const geoResult = await APIRequestFactory.createRequest(
         'standard',
       ).makeRequest({
         method: 'GET',
-        uri: `http://www.mapquestapi.com/geocoding/v1/address?key=${config.GEO_CONFIGS.key}&location=${resultAddress[0]}`,
+        uri,
         json: true,
       });
 
